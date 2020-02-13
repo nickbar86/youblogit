@@ -1,0 +1,18 @@
+insert into post(id,title,summary,content,date_posted,editor_name,version)  
+values(2,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),'Nikolaos Bartsotas',0);
+insert into post(id,title,summary,content,date_posted,editor_name,version)  
+values(3,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),'Nikolaos Bartsotas',0);
+insert into post(id,title,summary,content,date_posted,editor_name,version)  
+values(4,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),'Nikolaos Bartsotas',0);
+insert into post(id,title,summary,content,date_posted,editor_name,version)  
+values(5,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),'Nikolaos Bartsotas',0);
+insert into post(id,title,summary,content,date_posted,editor_name,version)  
+values(6,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),'Nikolaos Bartsotas',0);
+insert into post(id,title,summary,content,date_posted,editor_name,version)  
+values(7,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),'Nikolaos Bartsotas',0);
+insert into post(id,title,summary,content,date_posted,editor_name,version)  
+values(8,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),'Nikolaos Bartsotas',0);
+insert into post(id,title,summary,content,date_posted,editor_name,version)  
+values(9,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),'Nikolaos Bartsotas',0);
+insert into post(id,title,summary,content,date_posted,editor_name,version)  
+values(10,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),'Nikolaos Bartsotas',0);

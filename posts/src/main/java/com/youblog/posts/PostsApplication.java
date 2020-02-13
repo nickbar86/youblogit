@@ -15,7 +15,7 @@ import brave.sampler.Sampler;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients("com.youblog.posts.proxies")
-@ComponentScan("com.youblog")
+@ComponentScan("com.youblog.posts")
 public class PostsApplication {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PostsApplication.class);

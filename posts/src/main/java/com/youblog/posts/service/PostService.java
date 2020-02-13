@@ -34,10 +34,6 @@ public class PostService {
 	@Autowired
 	private PostMapper mapper;
 	
-	//TODO Fix Integration Testing to mock Feign client
-	@Value("${spring.profiles.active}")
-	private String activeProfile;
-
 	public Page<PostDTO> retrievePosts(Pageable pageable) {
 		logger.info("Fetching All Posts");
 		Page<Post> page = repository.findAllByOrderByDatePostedDesc(pageable);
@@ -46,12 +42,6 @@ public class PostService {
 			page.forEach(post -> post.setPort(Integer.parseInt(port)));
 		}
 		Page<PostDTO> responses = page.map(post -> mapper.entityToApi(post));
-		if(!activeProfile.equals("test")) {
-			responses.forEach(post -> {
-				//java.util.Optional<PostRanking> ranking =  serviceProxy.getPostAvgRanking(post.getId());
-				//ranking.ifPresent(rank->post.setRanking(rank.getAvgRanking()));
-			});
-		}
 		
 		return responses;
 	}
@@ -62,10 +52,6 @@ public class PostService {
 				.orElseThrow(() -> new NotFoundException("No Post found for postId: " + id));
 		PostDTO response = mapper.entityToApi(entity);
 		
-		if(!activeProfile.equals("test")) {
-			//java.util.Optional<PostRanking> ranking =  serviceProxy.getPostAvgRanking(id);
-			//ranking.ifPresent(rank->response.setRanking(rank.getAvgRanking()));
-		}
 		return response;
 	}
 
@@ -74,10 +60,6 @@ public class PostService {
 		post.setDatePosted(LocalDateTime.now());
 		PostDTO updatedResp = mapper.entityToApi(repository.save(mapper.apiToEntity(post)));
 		
-		if(!activeProfile.equals("test")) {
-			//java.util.Optional<PostRanking> ranking =  serviceProxy.getPostAvgRanking(post.getId());
-			//ranking.ifPresent(rank->updatedResp.setRanking(rank.getAvgRanking()));
-		}
 		return updatedResp;
 	}
 }
