@@ -8,7 +8,7 @@
 		<version>2.2.2.RELEASE</version>
 		<relativePath/>
 	</parent>
-	<groupId>com.microservices.util</groupId>
+	<groupId>com.youblog.util</groupId>
 	<artifactId>utilities</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>

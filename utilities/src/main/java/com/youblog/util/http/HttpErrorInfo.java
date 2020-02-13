@@ -1,4 +1,4 @@
-package com.microservices.util.http;
+package com.youblog.util.http;
 
 import org.springframework.http.HttpStatus;
 

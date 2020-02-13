@@ -1,4 +1,4 @@
-package com.microservices.util.exceptions;
+package com.youblog.util.exceptions;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException() {

@@ -1,4 +1,4 @@
-package com.microservices.util.exceptions;
+package com.youblog.util.exceptions;
 
 public class InvalidInputException extends RuntimeException {
     public InvalidInputException() {
