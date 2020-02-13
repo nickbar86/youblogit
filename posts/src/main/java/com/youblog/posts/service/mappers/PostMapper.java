@@ -1,4 +1,4 @@
-package com.microservices.blog.service.mappers;
+package com.youblog.posts.service.mappers;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
-import com.microservices.blog.persistence.model.Post;
-import com.microservices.blog.service.dto.PostDTO;
+import com.youblog.posts.persistence.model.Post;
+import com.youblog.posts.service.dto.PostDTO;
 
 @Mapper(componentModel = "spring")
 public interface PostMapper {

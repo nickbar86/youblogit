@@ -14,13 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.microservices.blog.persistence.model.Post;
-import com.microservices.blog.persistence.repository.PostRepository;
-import com.microservices.blog.proxies.PostRanking;
-import com.microservices.blog.proxies.ReviewsServiceProxy;
-import com.microservices.blog.service.dto.PostDTO;
-import com.microservices.blog.service.mappers.PostMapper;
-import com.microservices.util.exceptions.NotFoundException;
+import com.youblog.posts.persistence.model.Post;
+import com.youblog.posts.persistence.repository.PostRepository;
+import com.youblog.posts.service.dto.PostDTO;
+import com.youblog.posts.service.mappers.PostMapper;
+import com.youblog.util.exceptions.NotFoundException;
 
 @Service
 @Transactional
@@ -36,9 +34,6 @@ public class PostService {
 	@Autowired
 	private PostMapper mapper;
 	
-	@Autowired
-	private ReviewsServiceProxy serviceProxy;
-	
 	//TODO Fix Integration Testing to mock Feign client
 	@Value("${spring.profiles.active}")
 	private String activeProfile;
@@ -53,8 +48,8 @@ public class PostService {
 		Page<PostDTO> responses = page.map(post -> mapper.entityToApi(post));
 		if(!activeProfile.equals("test")) {
 			responses.forEach(post -> {
-				java.util.Optional<PostRanking> ranking =  serviceProxy.getPostAvgRanking(post.getId());
-				ranking.ifPresent(rank->post.setRanking(rank.getAvgRanking()));
+				//java.util.Optional<PostRanking> ranking =  serviceProxy.getPostAvgRanking(post.getId());
+				//ranking.ifPresent(rank->post.setRanking(rank.getAvgRanking()));
 			});
 		}
 		
@@ -68,8 +63,8 @@ public class PostService {
 		PostDTO response = mapper.entityToApi(entity);
 		
 		if(!activeProfile.equals("test")) {
-			java.util.Optional<PostRanking> ranking =  serviceProxy.getPostAvgRanking(id);
-			ranking.ifPresent(rank->response.setRanking(rank.getAvgRanking()));
+			//java.util.Optional<PostRanking> ranking =  serviceProxy.getPostAvgRanking(id);
+			//ranking.ifPresent(rank->response.setRanking(rank.getAvgRanking()));
 		}
 		return response;
 	}
@@ -80,8 +75,8 @@ public class PostService {
 		PostDTO updatedResp = mapper.entityToApi(repository.save(mapper.apiToEntity(post)));
 		
 		if(!activeProfile.equals("test")) {
-			java.util.Optional<PostRanking> ranking =  serviceProxy.getPostAvgRanking(post.getId());
-			ranking.ifPresent(rank->updatedResp.setRanking(rank.getAvgRanking()));
+			//java.util.Optional<PostRanking> ranking =  serviceProxy.getPostAvgRanking(post.getId());
+			//ranking.ifPresent(rank->updatedResp.setRanking(rank.getAvgRanking()));
 		}
 		return updatedResp;
 	}

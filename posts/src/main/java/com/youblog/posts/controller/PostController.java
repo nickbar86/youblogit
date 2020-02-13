@@ -1,11 +1,10 @@
-package com.microservices.blog.controller;
+package com.youblog.posts.controller;
 
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -19,14 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.microservices.blog.service.PostService;
-import com.microservices.blog.service.dto.PostDTO;
-import com.microservices.blog.util.PaginationUtil;
-import com.microservices.util.exceptions.NotFoundException;
-
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import com.youblog.posts.service.PostService;
+import com.youblog.posts.service.dto.PostDTO;
+import com.youblog.posts.util.PaginationUtil;
+import com.youblog.util.exceptions.NotFoundException;
 
 @RestController
 @RequestMapping("posts")
@@ -35,14 +30,9 @@ public class PostController {
 
 	@Autowired
 	private PostService service;
-	
 
 	@CrossOrigin(origins = "http://localhost:3000", exposedHeaders = "Link")
 	@GetMapping(path = "/")
-	@ApiOperation(value = "${api.posts.Get.all.description}", notes = "${api.posts.Get.all.notes}")
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Bad Request, invalid format of the request. See response message for more information."),
-			@ApiResponse(code = 422, message = "Unprocessable entity, input parameters caused the processing to fails. See response message for more information.") })
 	public ResponseEntity<List<PostDTO>> retrievePosts(Pageable pageable) {
 		logger.info("Fetching All Posts");
 		Page<PostDTO> page = service.retrievePosts(pageable);
@@ -50,10 +40,6 @@ public class PostController {
 		return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "${api.posts.Get.post.description}", notes = "${api.posts.Get.post.notes}")
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Bad Request, invalid format of the request. See response message for more information."),
-			@ApiResponse(code = 422, message = "Unprocessable entity, input parameters caused the processing to fails. See response message for more information.") })
 	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping(path = "{id}", produces = "application/json")
 	public ResponseEntity<PostDTO> getPost(@PathVariable("id") Long id) {
@@ -66,11 +52,6 @@ public class PostController {
 
 	}
 
-	@ApiOperation(value = "${api.posts.Post.post.description}", notes = "${api.posts.Post.post.notes}")
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Bad Request, invalid format of the request. See response message for more information."),
-			@ApiResponse(code = 404, message = "Not found, the specified id does not exist."),
-			@ApiResponse(code = 422, message = "Unprocessable entity, input parameters caused the processing to fails. See response message for more information.") })
 	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping(path = "/", produces = "application/json")
 	public ResponseEntity<PostDTO> savePost(@RequestBody PostDTO post) {
