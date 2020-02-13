@@ -14,13 +14,11 @@ ribbon.NFLoadBalancerPingInterval: 5
 
 spring.cloud.gateway.routes:
 
-- id: blog-post
-  uri: lb://blog-post
+- id: posts
+  uri: lb://post-service
   predicates:
-  - Path=/blog-post/**
-  #        filters:
-  #        - TokenRelay=
-
+  - Path=/posts/**
+  
 - id: oauth-server
   uri: lb://auth-server
   predicates:
