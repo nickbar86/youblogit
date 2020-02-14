@@ -19,6 +19,11 @@ spring.cloud.gateway.routes:
   predicates:
   - Path=/posts/**
   
+- id: posts
+  uri: lb://blog-service
+  predicates:
+  - Path=/blog-post/**
+  
 - id: oauth-server
   uri: lb://auth-server
   predicates:

@@ -35,8 +35,8 @@ public class HealthCheckConfiguration {
 
 		registry.register("auth-server", () -> getHealth("http://auth-server"));
 		registry.register("post-service", () -> getHealth("http://posts"));
-		registry.register("review-service", () -> getHealth("http://review"));
-		registry.register("blog-post-service", () -> getHealth("http://blog-post"));
+		//registry.register("review-service", () -> getHealth("http://review"));
+		registry.register("blog-service", () -> getHealth("http://blog-post"));
 
 		return new CompositeReactiveHealthIndicator(healthAggregator, registry);
 	}

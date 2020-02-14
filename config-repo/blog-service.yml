@@ -4,6 +4,8 @@ ribbon.ServerListRefreshInterval: 5000
 
 ribbon.NFLoadBalancerPingInterval: 5
 
+
+
 spring.cloud.stream:
   defaultBinder: rabbit
   default.contentType: application/json
@@ -19,11 +21,11 @@ spring.cloud.stream:
 
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
 
-app.product-service.timeoutSec: 2
+app.post-service.timeoutSec: 2
 
 resilience4j.retry:
   backends:
-    product:
+    post-service:
       maxRetryAttempts: 3
       waitDuration: 1000
       retryExceptions:
@@ -31,7 +33,7 @@ resilience4j.retry:
 
 resilience4j.circuitbreaker:
   backends:
-    product:
+    post:
       registerHealthIndicator: true
       ringBufferSizeInClosedState: 5
       failureRateThreshold: 50
@@ -39,13 +41,18 @@ resilience4j.circuitbreaker:
       ringBufferSizeInHalfOpenState: 3
       automaticTransitionFromOpenToHalfOpenEnabled: true
       ignoreExceptions:
-        - se.magnus.util.exceptions.InvalidInputException
-        - se.magnus.util.exceptions.NotFoundException
+        - com.youblog.util.exceptions.InvalidInputException
+        - com.youblog.util.exceptions.NotFoundException
+
+resilience4j.bulkhead:
+    instances:
+        post-service:
+            maxConcurrentCalls: 10
 
 logging:
   level:
     root: INFO
-    se.magnus: DEBUG
+    com.youblog: DEBUG
     org.springframework.web.server.adapter.HttpWebHandlerAdapter: TRACE
 
 ---
@@ -56,7 +63,7 @@ server.port: 8080
 ---
 spring.profiles: streaming_partitioned
 
-spring.cloud.stream.bindings.output-products.producer:
+spring.cloud.stream.bindings.output-posts.producer:
   partition-key-expression: payload.key
   partition-count: 2
 
