@@ -33,7 +33,7 @@ public class PostService {
 
 	@Autowired
 	private PostMapper mapper;
-	
+
 	public Page<PostDTO> retrievePosts(Pageable pageable) {
 		logger.info("Fetching All Posts");
 		Page<Post> page = repository.findAllByOrderByDatePostedDesc(pageable);
@@ -42,24 +42,39 @@ public class PostService {
 			page.forEach(post -> post.setPort(Integer.parseInt(port)));
 		}
 		Page<PostDTO> responses = page.map(post -> mapper.entityToApi(post));
-		
+
 		return responses;
 	}
 
-	public PostDTO getPost(@PathVariable("id") Long id) {
+	public PostDTO getPost(Long id) {
 		logger.info("Fetching Post " + id);
 		Post entity = repository.findById(id)
 				.orElseThrow(() -> new NotFoundException("No Post found for postId: " + id));
 		PostDTO response = mapper.entityToApi(entity);
-		
+
 		return response;
 	}
 
-	public PostDTO savePost(@RequestBody PostDTO post) {
+	public PostDTO savePost(PostDTO post) {
 		logger.info("Saving Post " + post.toString());
 		post.setDatePosted(LocalDateTime.now());
 		PostDTO updatedResp = mapper.entityToApi(repository.save(mapper.apiToEntity(post)));
-		
 		return updatedResp;
+	}
+
+	public void deletePost(Long id) {
+		repository.deleteById(id);
+	}
+
+	public PostDTO updatePost(PostDTO data) {
+		logger.info("Saving Post: {} ", data.getId());
+		Post entity = repository.findById(data.getId())
+				.orElseThrow(() -> new NotFoundException("No Post found for postId: " + data.getId()));
+		entity.setContent(data.getContent());
+		entity.setSummary(data.getSummary());
+		entity.setTitle(data.getTitle());
+		entity.setDatePosted(LocalDateTime.now());
+		repository.save(entity);
+		return data;
 	}
 }

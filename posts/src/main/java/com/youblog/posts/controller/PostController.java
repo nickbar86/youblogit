@@ -18,21 +18,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.youblog.posts.api.IPost;
 import com.youblog.posts.service.PostService;
 import com.youblog.posts.service.dto.PostDTO;
 import com.youblog.posts.util.PaginationUtil;
 import com.youblog.util.exceptions.NotFoundException;
 
 @RestController
-@RequestMapping("posts")
-public class PostController {
+public class PostController implements IPost {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private PostService service;
 
-	@CrossOrigin(origins = "http://localhost:3000", exposedHeaders = "Link")
-	@GetMapping(path = "/")
+	@Override
 	public ResponseEntity<List<PostDTO>> retrievePosts(Pageable pageable) {
 		logger.info("Fetching All Posts");
 		Page<PostDTO> page = service.retrievePosts(pageable);
@@ -40,9 +39,8 @@ public class PostController {
 		return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
-	@GetMapping(path = "{id}", produces = "application/json")
-	public ResponseEntity<PostDTO> getPost(@PathVariable("id") Long id) {
+	@Override
+	public ResponseEntity<PostDTO> getPost(Long id) {
 		logger.info("Fetching Post by " + id);
 		try {
 			return ResponseEntity.status(HttpStatus.OK).body(service.getPost(id));
@@ -52,10 +50,15 @@ public class PostController {
 
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
-	@PostMapping(path = "/", produces = "application/json")
-	public ResponseEntity<PostDTO> savePost(@RequestBody PostDTO post) {
+	@Override
+	public ResponseEntity<PostDTO> createPost(PostDTO post) {
 		logger.info("Saving Post " + post.toString());
 		return ResponseEntity.status(HttpStatus.OK).body(service.savePost(post));
+	}
+
+	@Override
+	public ResponseEntity<PostDTO> updatePost(PostDTO post) {
+		logger.info("Saving Post " + post.toString());
+		return ResponseEntity.status(HttpStatus.OK).body(service.updatePost(post));
 	}
 }

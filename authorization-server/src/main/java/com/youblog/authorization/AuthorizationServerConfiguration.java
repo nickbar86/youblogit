@@ -74,10 +74,10 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 		// @formatter:off
 		clients.inMemory().withClient("reader")
 				.authorizedGrantTypes("code", "authorization_code", "implicit", "password")
-				.redirectUris("http://my.redirect.uri").secret("{noop}secret").scopes("product:read")
+				.redirectUris("http://my.redirect.uri").secret("{noop}secret").scopes("blogpost:read")
 				.accessTokenValiditySeconds(600_000_000).and().withClient("writer")
 				.authorizedGrantTypes("code", "authorization_code", "implicit", "password")
-				.redirectUris("http://my.redirect.uri").secret("{noop}secret").scopes("product:read", "product:write")
+				.redirectUris("http://my.redirect.uri").secret("{noop}secret").scopes("blogpost:read", "blogpost:write")
 				.accessTokenValiditySeconds(600_000_000).and().withClient("noscopes")
 				.authorizedGrantTypes("code", "authorization_code", "implicit", "password")
 				.redirectUris("http://my.redirect.uri").secret("{noop}secret").scopes("none")

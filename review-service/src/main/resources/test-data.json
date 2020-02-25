@@ -1,0 +1,22 @@
+[
+	{
+		"_class": "com.youblog.review.persistence.model.Review",
+		"id": "4",
+		"reviewId": 3,
+		"datePosted": null,
+		"userId": "1",
+		"postId": 2,
+		"review": "nice",
+		"ranking": "20"
+	},
+	{
+		"_class": "com.youblog.review.persistence.model.Review",
+		"id": "5",
+		"reviewId": 1,
+		"datePosted": null,
+		"userId": "1",
+		"postId": 2,
+		"review": "nice",
+		"ranking": "30"
+	}
+]

@@ -22,6 +22,7 @@ spring.cloud.stream:
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
 
 app.post-service.timeoutSec: 2
+app.review-service.timeoutSec: 2
 
 resilience4j.retry:
   backends:
@@ -33,7 +34,7 @@ resilience4j.retry:
 
 resilience4j.circuitbreaker:
   backends:
-    post:
+    post-service:
       registerHealthIndicator: true
       ringBufferSizeInClosedState: 5
       failureRateThreshold: 50
