@@ -1,0 +1,25 @@
+docker run -d --hostname my-rabbit --name some-rabbit -p 8085:15672 rabbitmq:3-management
+docker-compose build
+docker-compose up
+mvn package -Dmaven.test.skip=true; cd ..; cd  netflix-eureka-naming-server/; mvn package -Dmaven.test.skip=true; cd ..; cd  netflix-zuul-api-gateway-server/; mvn package -Dmaven.test.skip=true; cd ..; cd reviews-service; mvn package -Dmaven.test.skip=true; cd ..; cd blog-service
+
+
+//password access
+ACCESS_TOKEN=$(curl -k https://writer:secret@localhost:8443/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
+AUTH="-H \"Authorization: Bearer $ACCESS_TOKEN\""
+READER_ACCESS_TOKEN=$(curl -k https://reader:secret@localhost:8443/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
+AUTH_READER="-H \"Authorization: Bearer $READER_ACCESS_TOKEN\""
+curl -k https://localhost:8443/blog-post/2 $AUTH_READER -s
+curl -k https://localhost:8443/blog-post -H "Authorization: Bearer $READER_ACCESS_TOKEN"
+
+//implicit grantflow
+https://localhost:8443/oauth/authorize?response_type=token&client_id=reader&redirect_uri=http://my.redirect.uri&scope=blogpost:read&state=48532
+
+//grant flow
+https://localhost:8443/oauth/authorize?response_type=code&client_id=reader&redirect_uri=http://my.redirect.uri&scope=blogpost:read&state=35752
+http://my.redirect.uri/?code=N7h280&state=35752
+curl -k https://reader:secret@localhost:8443/oauth/token -d grant_type=authorization_code -d client_id=reader -d redirect_uri=http://my.redirect.uri -d code=N7h280 -s | jq .
+
+
+
+https://dzone.com/articles/doing-stuff-with-spring-webflux
