@@ -1,7 +1,7 @@
 [
 	{
 		"_class": "com.youblog.review.persistence.model.Review",
-		"datePosted": new Date(),
+		"datePosted": null,
 		"userId": "1",
 		"postId": 2,
 		"review": "nice",
@@ -9,7 +9,7 @@
 	},
 	{
 		"_class": "com.youblog.review.persistence.model.Review",
-		"datePosted": new Date(),
+		"datePosted": null,
 		"userId": "1",
 		"postId": 2,
 		"review": "nice",

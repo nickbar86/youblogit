@@ -13,7 +13,9 @@ public interface ReviewRepository extends ReactiveCrudRepository<Review, Long>, 
 
 	Flux<Review> findAllByPostIdOrderByDatePostedDesc(Long postId);
 
-	Mono<Review> findByReviewId(Long id);
+	//Mono<Review> findByReviewId(Long id);
 
 	Flux<Review> findByPostId(Long postId);
+	
+	void deleteByPostId(Long postId);
 }

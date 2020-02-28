@@ -27,7 +27,7 @@ public class ReviewDaoImpl implements ReviewDao {
 	}
 
 	private GroupOperation getGroupOperation() {
-		return group("userId","postId").avg("ranking").as("avgRanking");
+		return group("postId").avg("ranking").as("avgRanking");
 	}
 
 	private ProjectionOperation getProjectOperation() {

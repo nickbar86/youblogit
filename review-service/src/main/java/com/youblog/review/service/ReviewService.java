@@ -1,5 +1,7 @@
 package com.youblog.review.service;
 
+import java.time.LocalDateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,18 +41,42 @@ public class ReviewService {
 	public Flux<ReviewDTO> findByPostId(Long postId) {
 		if (postId < 1)
 			throw new InvalidInputException("Invalid postId: " + postId);
-		Flux<Review> entityList = repository.findByPostId(postId);
-		Flux<ReviewDTO> list = entityList.map(ent -> mapper.entityToApi(ent));
+		Flux<Review> entityList = repository.findByPostId(postId).doOnNext(inp -> LOG.debug(inp.getId().toHexString()));
+		Flux<ReviewDTO> list = entityList.map(ent -> mapper.entityToApi(ent)).log();
 		LOG.debug("findByPostId: {}", postId);
 		return list;
 	}
 
-	public Mono<ReviewDTO> findById(Long reviewId) {
-		if (reviewId < 1)
+	public Mono<ReviewDTO> findById(String reviewId) {
+		if (reviewId == null)
 			throw new InvalidInputException("Invalid reviewId: " + reviewId);
-		Mono<Review> review = repository.findById(reviewId.toString());
-		Mono<ReviewDTO> reviewDTO = review.map(ent -> mapper.entityToApi(ent));
-		LOG.debug("findById: {}", reviewDTO);
+		Mono<Review> review = repository.findById(reviewId);
+		Mono<ReviewDTO> reviewDTO = review.map(ent -> {
+			return mapper.entityToApi(ent);
+		});
+		LOG.debug("findById: {}", reviewId);
 		return reviewDTO;
+	}
+
+	public void saveReview(ReviewDTO review) {
+		repository.save(mapper.apiToEntity(review));
+	}
+
+	public void deleteReviewsByPostId(long postId) {
+		repository.deleteByPostId(postId);
+	}
+
+	public void deleteReview(long reviewId) {
+		repository.deleteById(reviewId);
+	}
+
+	public void updateReview(ReviewDTO data) {
+		LOG.info("Saving Review: {} ", data.getReviewId());
+		repository.findById(data.getReviewId()).doOnNext(entity -> {
+			entity.setDatePosted(LocalDateTime.now());
+			entity.setRanking(data.getRanking());
+			entity.setReview(data.getReview());
+			repository.save(entity);
+		});
 	}
 }

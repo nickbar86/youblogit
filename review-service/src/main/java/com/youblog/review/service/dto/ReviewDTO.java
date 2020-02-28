@@ -2,8 +2,10 @@ package com.youblog.review.service.dto;
 
 import java.time.LocalDateTime;
 
+import org.bson.types.ObjectId;
+
 public class ReviewDTO {
-	private Long reviewId;
+	private String reviewId;
 	private LocalDateTime datePosted;
 	private Integer userId;
 	private Long postId;
@@ -14,18 +16,18 @@ public class ReviewDTO {
 		super();
 	}
 
-	public ReviewDTO(Long reviewId, LocalDateTime datePosted, Integer userId, Long postId, String review,
+	public ReviewDTO(String reviewId, LocalDateTime datePosted, Integer userId, Long postId, String review,
 			Integer ranking) {
 		super();
 		this.reviewId = reviewId;
 		this.datePosted = datePosted;
 		this.userId = userId;
 		this.postId = postId;
-		this.review = review;
+		this.setReview(review);
 		this.ranking = ranking;
 	}
 
-	public void setReviewId(Long reviewId) {
+	public void setReviewId(String reviewId) {
 		this.reviewId = reviewId;
 	}
 
@@ -41,15 +43,11 @@ public class ReviewDTO {
 		this.postId = postId;
 	}
 
-	public void setReview(String review) {
-		this.review = review;
-	}
-
 	public void setRanking(Integer ranking) {
 		this.ranking = ranking;
 	}
 
-	public Long getReviewId() {
+	public String getReviewId() {
 		return reviewId;
 	}
 
@@ -65,12 +63,16 @@ public class ReviewDTO {
 		return postId;
 	}
 
+	public Integer getRanking() {
+		return ranking;
+	}
+
 	public String getReview() {
 		return review;
 	}
 
-	public Integer getRanking() {
-		return ranking;
+	public void setReview(String review) {
+		this.review = review;
 	}
 
 }

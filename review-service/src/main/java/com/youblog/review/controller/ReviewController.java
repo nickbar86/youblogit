@@ -52,7 +52,7 @@ public class ReviewController implements IReview {
 	}
 
 	@Override
-	public Mono<ReviewDTO> findById(Long reviewId) {
+	public Mono<ReviewDTO> findById(String reviewId) {
 		return service.findById(reviewId);
 	}
 }

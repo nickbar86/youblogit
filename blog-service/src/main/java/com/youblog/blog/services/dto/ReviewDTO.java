@@ -3,7 +3,7 @@ package com.youblog.blog.services.dto;
 import java.time.LocalDateTime;
 
 public class ReviewDTO {
-	private Long reviewId;
+	private String reviewId;
 	private LocalDateTime datePosted;
 	private Integer userId;
 	private Long postId;
@@ -11,7 +11,7 @@ public class ReviewDTO {
 	private Integer ranking;
 	
 
-	public ReviewDTO(Long reviewId, LocalDateTime datePosted, Integer userId, Long postId, String review,
+	public ReviewDTO(String reviewId, LocalDateTime datePosted, Integer userId, Long postId, String review,
 			Integer ranking) {
 		super();
 		this.reviewId = reviewId;
@@ -27,7 +27,7 @@ public class ReviewDTO {
 	}
 	
 
-	public void setReviewId(Long reviewId) {
+	public void setReviewId(String reviewId) {
 		this.reviewId = reviewId;
 	}
 
@@ -51,7 +51,7 @@ public class ReviewDTO {
 		this.ranking = ranking;
 	}
 
-	public Long getReviewId() {
+	public String getReviewId() {
 		return reviewId;
 	}
 

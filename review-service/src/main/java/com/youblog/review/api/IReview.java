@@ -20,5 +20,5 @@ public interface IReview {
 	public Flux<ReviewDTO> findByPostId(@RequestParam(name = "postId", required = true) Long postId);
 	
 	@GetMapping(path = "/{id}/", produces = "application/json")
-	public Mono<ReviewDTO> findById(@PathVariable(name = "id") Long reviewId);
+	public Mono<ReviewDTO> findById(@PathVariable(name = "id") String reviewId);
 }

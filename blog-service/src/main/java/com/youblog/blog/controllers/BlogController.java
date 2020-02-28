@@ -136,11 +136,11 @@ public class BlogController implements IBlog {
 	public void internalCreatePost(SecurityContext sc, PostDTO body) {
 		try {
 			logAuthorizationInfo(sc);
-			LOG.debug("create Post: creates a new composite entity for post", body.getTitle());
+			LOG.debug("internalCreatePost: creates a new for post", body.getTitle());
 			integration.createPost(body);
-			LOG.debug("createCompositeProduct: composite entities created", body.getTitle());
+			LOG.debug("internalCreatePost: created a new for post", body.getTitle());
 		} catch (RuntimeException re) {
-			LOG.warn("createCompositeProduct failed: {}", re.toString());
+			LOG.warn("internalCreatePost failed: {}", re.toString());
 			throw re;
 		}
 	}
@@ -156,10 +156,10 @@ public class BlogController implements IBlog {
 	private void internalDeletePost(SecurityContext sc, int postId) {
 		try {
 			logAuthorizationInfo(sc);
-			LOG.debug("deletePts: Deletes a post aggregate for postId: {}", postId);
+			LOG.debug("internalDeletePost: Deletes a post aggregate for postId: {}", postId);
 			integration.deletePost(postId);
-			// integration.deleteReviews(postId);
-			LOG.debug("internalDeletePost: aggregate entities deleted for postId: {}", postId);
+			internalDeletePostReviews(postId);
+			LOG.debug("internalDeletePost: Deleted a post with postId: {}", postId);
 		} catch (RuntimeException re) {
 			LOG.warn("internalDeletePost failed: {}", re.toString());
 			throw re;
@@ -230,18 +230,18 @@ public class BlogController implements IBlog {
 	}
 
 	@Override
-	public Mono<ReviewDTO> getReview(Long reviewId) {
+	public Mono<ReviewDTO> getReview(String reviewId) {
 		return integration.getReview(reviewId);
 	}
 
 	public void internalUpdatePost(SecurityContext sc, PostDTO body) {
 		try {
 			logAuthorizationInfo(sc);
-			LOG.debug("update Post: updates an existing postid:{}", body.getId());
+			LOG.debug("internalUpdatePost: updates an existing postid:{}", body.getId());
 			integration.updatePost(body);
-			LOG.debug("updated existing postId:", body.getId());
+			LOG.debug("internalUpdatePost: updated existing postId:{}", body.getId());
 		} catch (RuntimeException re) {
-			LOG.warn("createCompositeProduct failed: {}", re.toString());
+			LOG.warn("internalUpdatePost failed: {}", re.toString());
 			throw re;
 		}
 	}
@@ -250,5 +250,68 @@ public class BlogController implements IBlog {
 	public Mono<PostDTO> updatePost(PostDTO body) {
 		return ReactiveSecurityContextHolder.getContext().doOnSuccess(sc -> internalUpdatePost(sc, body))
 				.thenReturn(body);
+	}
+
+	@Override
+	public Mono<Void> createReview(ReviewDTO body) {
+		return ReactiveSecurityContextHolder.getContext().doOnSuccess(sc -> internalCreateReview(sc, body)).then();
+	}
+
+	public void internalCreateReview(SecurityContext sc, ReviewDTO body) {
+		try {
+			logAuthorizationInfo(sc);
+			LOG.debug("internalCreateReview: creates a Review for post: {}", body.getPostId());
+			integration.createReview(body);
+			LOG.debug("internalCreateReview: created a Review for post: {}", body.getPostId());
+		} catch (RuntimeException re) {
+			LOG.warn("internalCreateReview: create Review for post failed: {}", re.toString());
+			throw re;
+		}
+	}
+
+	@Override
+	public Mono<ReviewDTO> updateReview(ReviewDTO body) {
+		return ReactiveSecurityContextHolder.getContext().doOnSuccess(sc -> internalUpdateReview(sc, body))
+				.thenReturn(body);
+	}
+
+	public void internalUpdateReview(SecurityContext sc, ReviewDTO body) {
+		try {
+			logAuthorizationInfo(sc);
+			LOG.debug("internalUpdateReview: updates an existing review:{}", body.getReviewId());
+			integration.updateReview(body);
+			LOG.debug("internalUpdateReview: updated an existing review:{}", body.getReviewId());
+		} catch (RuntimeException re) {
+			LOG.warn("internalUpdateReview failed: {}", re.toString());
+			throw re;
+		}
+	}
+
+	@Override
+	public Mono<Void> deleteReview(int reviewId) {
+		return ReactiveSecurityContextHolder.getContext().doOnSuccess(sc -> internalDeleteReview(sc, reviewId)).then();
+	}
+
+	private void internalDeletePostReviews(int postId) {
+		try {
+			LOG.debug("internalDeletePostReviews: Deletes a reviews for postId: {}", postId);
+			integration.deletePostReviews(postId);
+			LOG.debug("internalDeleteReview: Deletes review with reviewId: {}", postId);
+		} catch (RuntimeException re) {
+			LOG.warn("internalDeleteReview failed: {}", re.toString());
+			throw re;
+		}
+	}
+
+	private void internalDeleteReview(SecurityContext sc, int reviewId) {
+		try {
+			logAuthorizationInfo(sc);
+			LOG.debug("internalDeleteReview: Deletes a review aggregate for reviewId: {}", reviewId);
+			integration.deleteReview(reviewId);
+			LOG.debug("internalDeleteReview: Deletes review with reviewId: {}", reviewId);
+		} catch (RuntimeException re) {
+			LOG.warn("internalDeleteReview failed: {}", re.toString());
+			throw re;
+		}
 	}
 }

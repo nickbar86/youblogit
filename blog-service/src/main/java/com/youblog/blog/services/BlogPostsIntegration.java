@@ -10,14 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -58,11 +56,11 @@ public class BlogPostsIntegration {
 
 	public interface MessageSources {
 
-		String OUTPUT_PRODUCTS = "output-posts";
+		String OUTPUT_POSTS = "output-posts";
 		String OUTPUT_REVIEWS = "output-reviews";
 
-		@Output(OUTPUT_PRODUCTS)
-		MessageChannel outputProducts();
+		@Output(OUTPUT_POSTS)
+		MessageChannel outputPosts();
 
 		@Output(OUTPUT_REVIEWS)
 		MessageChannel outputReviews();
@@ -82,7 +80,7 @@ public class BlogPostsIntegration {
 	}
 
 	public PostDTO createPost(PostDTO body) {
-		messageSources.outputProducts()
+		messageSources.outputPosts()
 				.send(MessageBuilder.withPayload(new Event(Type.CREATE, body.getTitle(), body)).build());
 		return body;
 	}
@@ -113,7 +111,7 @@ public class BlogPostsIntegration {
 	}
 
 	public void deletePost(int postId) {
-		messageSources.outputProducts().send(MessageBuilder.withPayload(new Event(Type.DELETE, postId, null)).build());
+		messageSources.outputPosts().send(MessageBuilder.withPayload(new Event(Type.DELETE, postId, null)).build());
 	}
 
 	@Retry(name = "review-service")
@@ -178,7 +176,7 @@ public class BlogPostsIntegration {
 
 	@Retry(name = "review-service")
 	@CircuitBreaker(name = "review-service")
-	public Mono<ReviewDTO> getReview(Long reviewId) {
+	public Mono<ReviewDTO> getReview(String reviewId) {
 		URI url = UriComponentsBuilder.fromUriString(reviewServiceUrl + "/reviews/{reviewId}/").build(reviewId);
 		LOG.debug("Will call the getReviews API on URL: {}", url);
 		return getWebClient().get().uri(url).retrieve().bodyToMono(ReviewDTO.class).log()
@@ -187,9 +185,28 @@ public class BlogPostsIntegration {
 	}
 
 	public PostDTO updatePost(PostDTO body) {
-		messageSources.outputProducts()
+		messageSources.outputPosts()
 				.send(MessageBuilder.withPayload(new Event(Type.UPDATE, body.getId(), body)).build());
 		return body;
 	}
 
+	public void createReview(ReviewDTO body) {
+		messageSources.outputReviews()
+				.send(MessageBuilder.withPayload(new Event(Type.CREATE, body.getUserId(), body)).build());
+	}
+
+	public ReviewDTO updateReview(ReviewDTO body) {
+		messageSources.outputReviews()
+				.send(MessageBuilder.withPayload(new Event(Type.UPDATE, body.getReviewId(), body)).build());
+		return body;
+	}
+
+	public void deleteReview(int reviewId) {
+		messageSources.outputReviews().send(MessageBuilder.withPayload(new Event(Type.DELETE, reviewId, null)).build());
+	}
+
+	public void deletePostReviews(int postId) {
+		messageSources.outputReviews()
+				.send(MessageBuilder.withPayload(new Event(Type.DELETE, "postId:" + postId, null)).build());
+	}
 }

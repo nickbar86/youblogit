@@ -2,32 +2,24 @@ package com.youblog.review.persistence.model;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "reviews")
 public class Review {
-	@Transient
-    public static final String SEQUENCE_NAME = "reviews_sequence";
-	@Id
-	private String id;
+	private ObjectId id;
 	@Version
 	private Integer version;
-	@Indexed(unique = true)
-	private Long reviewId;
 	private LocalDateTime datePosted;
 	private Integer userId;
 	private Long postId;
 	private String review;
 	private Integer ranking;
-	
-	public Review(Long reviewId, LocalDateTime datePosted, Integer userId, Long postId, String review,
-			Integer ranking) {
+
+	public Review(ObjectId id, LocalDateTime datePosted, Integer userId, Long postId, String review, Integer ranking) {
 		super();
-		this.reviewId = reviewId;
+		this.id = id;
 		this.datePosted = datePosted;
 		this.userId = userId;
 		this.postId = postId;
@@ -37,14 +29,6 @@ public class Review {
 
 	public Review() {
 		super();
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public Integer getVersion() {
@@ -95,13 +79,12 @@ public class Review {
 		this.ranking = ranking;
 	}
 
-	public Long getReviewId() {
-		return reviewId;
+	public ObjectId getId() {
+		return id;
 	}
 
-	public void setReviewId(Long reviewId) {
-		this.reviewId = reviewId;
+	public void setId(ObjectId id) {
+		this.id = id;
 	}
-	
 
 }

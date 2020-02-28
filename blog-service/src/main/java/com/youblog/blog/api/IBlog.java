@@ -41,5 +41,15 @@ public interface IBlog {
 	public Flux<ReviewDTO> getReviews(@RequestParam(name = "postId", required = true)  Long postId);
 	
 	@GetMapping(value = "/blog-post/reviews/{reviewId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<ReviewDTO> getReview(@PathVariable Long reviewId);
+	public Mono<ReviewDTO> getReview(@PathVariable String reviewId);
+	
+	@PutMapping(value = "/blog-post/reviews/", consumes = "application/json")
+	public Mono<Void> createReview(@RequestBody ReviewDTO body);
+	
+	@PostMapping(value = "/blog-post/reviews/", consumes = "application/json")
+	public Mono<ReviewDTO> updateReview(@RequestBody ReviewDTO body);
+	
+	@DeleteMapping(value = "/blog-post/reviews/{reviewId}/")
+	public Mono<Void> deleteReview(@PathVariable int reviewId);
+
 }
