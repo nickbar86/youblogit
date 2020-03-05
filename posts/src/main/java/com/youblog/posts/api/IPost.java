@@ -17,7 +17,7 @@ import com.youblog.posts.service.dto.PostDTO;
 @RequestMapping("posts")
 public interface IPost {
 	@CrossOrigin(origins = "http://localhost:3000", exposedHeaders = "Link")
-	@GetMapping(path = "/")
+	@GetMapping(path = "/", produces = "application/json")
 	public ResponseEntity<List<PostDTO>> retrievePosts(Pageable pageable) ;
 
 	@CrossOrigin(origins = "http://localhost:3000")

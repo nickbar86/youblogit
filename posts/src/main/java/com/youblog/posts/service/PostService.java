@@ -24,15 +24,17 @@ import com.youblog.util.exceptions.NotFoundException;
 @Transactional
 public class PostService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-	@Autowired
 	private PostRepository repository;
-
-	@Autowired
 	private Environment environment;
-
-	@Autowired
 	private PostMapper mapper;
+	
+	@Autowired
+	public PostService(PostRepository repository, Environment environment, PostMapper mapper) {
+		super();
+		this.repository = repository;
+		this.environment = environment;
+		this.mapper = mapper;
+	}
 
 	public Page<PostDTO> retrievePosts(Pageable pageable) {
 		logger.info("Fetching All Posts");

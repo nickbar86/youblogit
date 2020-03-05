@@ -35,13 +35,13 @@ public class PostController implements IPost {
 	public ResponseEntity<List<PostDTO>> retrievePosts(Pageable pageable) {
 		logger.info("Fetching All Posts");
 		Page<PostDTO> page = service.retrievePosts(pageable);
-		HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/posts");
+		HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/posts/");
 		return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
 	}
 
 	@Override
 	public ResponseEntity<PostDTO> getPost(Long id) {
-		logger.info("Fetching Post by " + id);
+		logger.info("Fetching Post by id" + id);
 		try {
 			return ResponseEntity.status(HttpStatus.OK).body(service.getPost(id));
 		} catch (NotFoundException ex) {
@@ -53,7 +53,7 @@ public class PostController implements IPost {
 	@Override
 	public ResponseEntity<PostDTO> createPost(PostDTO post) {
 		logger.info("Saving Post " + post.toString());
-		return ResponseEntity.status(HttpStatus.OK).body(service.savePost(post));
+		return ResponseEntity.status(HttpStatus.CREATED).body(service.savePost(post));
 	}
 
 	@Override
