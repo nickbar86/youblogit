@@ -1,14 +1,12 @@
 package com.youblog.posts.repository;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +16,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
-
 import com.youblog.posts.PostParameterResolver;
 import com.youblog.posts.persistence.model.Post;
 import com.youblog.posts.persistence.repository.PostRepository;
@@ -52,21 +50,11 @@ public class PostRepositoryTest {
 	@Test
 	@DisplayName("Check that fetch works with Pageable info as expected.")
 	void givenPageableFetchAllOrderByDateCorrectly() {
-		Pageable pageRequest = PageRequest.of(0, 2);
-		Page<Post> results = repo.findAllByOrderByDatePostedDesc(pageRequest);
+		Pageable pageRequest = PageRequest.of(0, 2, Sort.by("datePosted").descending());
+		Page<Post> results = repo.findAll(pageRequest);
 		assertTrue(results.getContent().size() == 2,
 				"Fetch should have " + original.size() + " elements in list but got " + results.getContent().size());
-		assertTrue(testSameCollections(orderByDateDesc(original), results.getContent()),
-				"Result should have Post entities ordered by Date");
-	}
-	
-	@Test
-	@DisplayName("Check that fetch works with Null Pageable info as expected.")
-	void givenNullPageableFetchAllOrderByDateCorrectly() {
-		Page<Post> results = repo.findAllByOrderByDatePostedDesc(null);
-		assertTrue(results.getContent().size() == 2,
-				"Fetch should have " + original.size() + " elements in list but got " + results.getContent().size());
-		assertTrue(testSameCollections(orderByDateDesc(original), results.getContent()),
+		assertTrue(testSameCollections(orderByDateDesc(results.getContent()), results.getContent()),
 				"Result should have Post entities ordered by Date");
 	}
 

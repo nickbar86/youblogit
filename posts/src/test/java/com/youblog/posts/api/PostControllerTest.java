@@ -47,7 +47,7 @@ import com.youblog.util.exceptions.NotFoundException;
 @ExtendWith(PostParameterResolver.class)
 @ExtendWith(PostDTOParameterResolver.class)
 @DisplayName("Integration tests For Post Controller")
-public class PostControllerITest {
+public class PostControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@Autowired
@@ -76,7 +76,7 @@ public class PostControllerITest {
 		Page<PostDTO> pageDto = new PageImpl<>(dtoListPaged, pageRequest, 10);
 		Page<Post> page = new PageImpl<>(listPaged, pageRequest, 10);
 		Mockito.when(service.retrievePosts(pageRequest)).thenReturn(pageDto);
-		Mockito.when(repo.findAllByOrderByDatePostedDesc(pageRequest)).thenReturn(page);
+		Mockito.when(repo.findAll(pageRequest)).thenReturn(page);
 		MvcResult result = mockMvc.perform(get("/posts/?page=0&size=10"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json;"))
@@ -94,7 +94,7 @@ public class PostControllerITest {
 		Page<PostDTO> pageDto = new PageImpl<>(dtoListPaged, pageRequest, dtoListPaged.size());
 		Page<Post> page = new PageImpl<>(listPaged, pageRequest, listPaged.size());
 		Mockito.when(service.retrievePosts(pageRequest)).thenReturn(pageDto);
-		Mockito.when(repo.findAllByOrderByDatePostedDesc(pageRequest)).thenReturn(page);
+		Mockito.when(repo.findAll(pageRequest)).thenReturn(page);
 		MvcResult result = mockMvc.perform(get("/posts/"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json;"))
@@ -105,8 +105,16 @@ public class PostControllerITest {
 	@Test
 	@DisplayName("GET /posts/{id} Check get post with valid id return PageDTO Object and 200")
 	void givenIdForExistingObjectReturnObject() throws Exception {
-		Post orginalPost = originalPosts.get(0);
-		PostDTO orifinalPostDto = originalPostsDto.get(0);
+		Post orginalPost = new Post();
+		orginalPost.setContent("This is a test 1");
+		orginalPost.setDatePosted(LocalDateTime.now());
+		orginalPost.setEditorName("Test Editor 1");
+		orginalPost.setPort(123);
+		orginalPost.setSummary("Test Summary 1");
+		orginalPost.setTitle("Test 1");
+		orginalPost.setId(1L);
+		orginalPost.setVersion(0);
+		PostDTO orifinalPostDto = mappers.entityToApi(orginalPost);
 		Mockito.when(service.getPost(orifinalPostDto.getId())).thenReturn(orifinalPostDto);
 		Mockito.when(repo.findById(orginalPost.getId())).thenReturn(Optional.of(orginalPost));
 		MvcResult result = mockMvc.perform(get("/posts/{id}",orginalPost.getId()))

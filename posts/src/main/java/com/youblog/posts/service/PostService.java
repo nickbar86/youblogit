@@ -38,7 +38,7 @@ public class PostService {
 
 	public Page<PostDTO> retrievePosts(Pageable pageable) {
 		logger.info("Fetching All Posts");
-		Page<Post> page = repository.findAllByOrderByDatePostedDesc(pageable);
+		Page<Post> page = repository.findAll(pageable);
 		String port = environment.getProperty("local.server.port");
 		if (port != null) {
 			page.forEach(post -> post.setPort(Integer.parseInt(port)));
@@ -58,9 +58,10 @@ public class PostService {
 	}
 
 	public PostDTO savePost(PostDTO post) {
-		logger.info("Saving Post " + post.toString());
+		logger.info("Saving Post");
 		post.setDatePosted(LocalDateTime.now());
 		PostDTO updatedResp = mapper.entityToApi(repository.save(mapper.apiToEntity(post)));
+		logger.info("Saves Post " + updatedResp.getId());
 		return updatedResp;
 	}
 

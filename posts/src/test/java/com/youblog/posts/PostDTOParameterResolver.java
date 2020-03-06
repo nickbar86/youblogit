@@ -20,14 +20,15 @@ public class PostDTOParameterResolver implements ParameterResolver {
 	public PostDTOParameterResolver() {
 		Map<String, PostDTO> posts = new HashMap<>();
 		PostDTO dto = new PostDTO();
-		dto.setContent("This is a test");
+		dto.setContent("This is a test 1");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 1));
-		dto.setEditorName("Test Editor");
+		dto.setEditorName("Test Editor 1");
 		dto.setPort(123);
-		dto.setSummary("Test Summary");
+		dto.setSummary("Test Summary 1");
 		dto.setTitle("Test 1");
 		dto.setId(1L);
 		posts.put("Test 1", dto);
+		
 		dto = new PostDTO();
 		dto.setContent("This is a test 2");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 2));

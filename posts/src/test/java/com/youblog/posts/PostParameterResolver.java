@@ -26,9 +26,10 @@ public class PostParameterResolver implements ParameterResolver {
 		entity.setPort(123);
 		entity.setSummary("Test Summary 1");
 		entity.setTitle("Test 1");
-		entity.setId(1L);
+		//entity.setId(1L);
 		entity.setVersion(0);
-		posts.put("Test 2", entity);
+		posts.put("Test 1", entity);
+		
 		entity = new Post();
 		entity.setContent("This is a test 2");
 		entity.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 2));
@@ -36,7 +37,7 @@ public class PostParameterResolver implements ParameterResolver {
 		entity.setPort(123);
 		entity.setSummary("Test Summary");
 		entity.setTitle("Test 2");
-		entity.setId(2L);
+		//entity.setId(2L);
 		entity.setVersion(0);
 		posts.put("Test 2", entity);
 		
@@ -47,7 +48,7 @@ public class PostParameterResolver implements ParameterResolver {
 		entity.setPort(123);
 		entity.setSummary("Test Summary");
 		entity.setTitle("Test 3");
-		entity.setId(3L);
+		//entity.setId(3L);
 		entity.setVersion(0);
 		posts.put("Test 3", entity);
 		
@@ -58,7 +59,7 @@ public class PostParameterResolver implements ParameterResolver {
 		entity.setPort(123);
 		entity.setSummary("Test Summary");
 		entity.setTitle("Test 4");
-		entity.setId(4L);
+		//entity.setId(4L);
 		entity.setVersion(0);
 		posts.put("Test 4", entity);
 		
@@ -69,7 +70,7 @@ public class PostParameterResolver implements ParameterResolver {
 		entity.setPort(123);
 		entity.setSummary("Test Summary");
 		entity.setTitle("Test 5");
-		entity.setId(5L);
+		//entity.setId(5L);
 		entity.setVersion(0);
 		posts.put("Test 5", entity);
 		
@@ -91,7 +92,7 @@ public class PostParameterResolver implements ParameterResolver {
 		entity.setPort(123);
 		entity.setSummary("Test Summary");
 		entity.setTitle("Test 7");
-		entity.setId(7L);
+		//entity.setId(7L);
 		entity.setVersion(0);
 		posts.put("Test 7", entity);
 		
@@ -102,7 +103,7 @@ public class PostParameterResolver implements ParameterResolver {
 		entity.setPort(123);
 		entity.setSummary("Test Summary");
 		entity.setTitle("Test 8");
-		entity.setId(8L);
+		//entity.setId(8L);
 		entity.setVersion(0);
 		posts.put("Test 8", entity);
 		
@@ -113,7 +114,7 @@ public class PostParameterResolver implements ParameterResolver {
 		entity.setPort(123);
 		entity.setSummary("Test Summary");
 		entity.setTitle("Test 9");
-		entity.setId(9L);
+		//entity.setId(9L);
 		entity.setVersion(0);
 		posts.put("Test 9", entity);
 		
@@ -124,7 +125,7 @@ public class PostParameterResolver implements ParameterResolver {
 		entity.setPort(123);
 		entity.setSummary("Test Summary");
 		entity.setTitle("Test 10");
-		entity.setId(10L);
+		//entity.setId(10L);
 		entity.setVersion(0);
 		posts.put("Test 10", entity);
 		
@@ -135,7 +136,7 @@ public class PostParameterResolver implements ParameterResolver {
 		entity.setPort(123);
 		entity.setSummary("Test Summary");
 		entity.setTitle("Test 11");
-		entity.setId(11L);
+		//entity.setId(11L);
 		entity.setVersion(0);
 		posts.put("Test 11", entity);
 		
