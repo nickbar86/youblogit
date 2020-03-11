@@ -135,7 +135,7 @@ class UserConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public UserDetailsService userDetailsService() {
 		return new InMemoryUserDetailsManager(
-				User.withDefaultPasswordEncoder().username("magnus").password("password").roles("USER").build());
+				User.withDefaultPasswordEncoder().username("admin").password("this is an admin password").roles("USER").build());
 	}
 }
 

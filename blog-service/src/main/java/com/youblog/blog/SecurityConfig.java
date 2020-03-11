@@ -18,7 +18,7 @@ public class SecurityConfig {
 				.pathMatchers("/actuator/**").permitAll()
 				.pathMatchers(POST, "/blog-post/**").hasAuthority("SCOPE_blogpost:write")
 				.pathMatchers(DELETE, "/blog-post/**").hasAuthority("SCOPE_blogpost:write")
-				.pathMatchers(GET, "/blog-post/**").hasAuthority("SCOPE_blogpost:read")
+				.pathMatchers(GET, "/blog-post/**").permitAll()
 				.anyExchange().authenticated()
 				.and()
 			.oauth2ResourceServer()

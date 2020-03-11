@@ -3,14 +3,16 @@ package com.youblog.review.persistence.model;
 import java.time.LocalDateTime;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "reviews")
 public class Review {
+	@Id
 	private ObjectId id;
 	@Version
-	private Integer version;
+	private Long version;
 	private LocalDateTime datePosted;
 	private Integer userId;
 	private Long postId;
@@ -31,11 +33,11 @@ public class Review {
 		super();
 	}
 
-	public Integer getVersion() {
+	public Long getVersion() {
 		return version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion(Long version) {
 		this.version = version;
 	}
 

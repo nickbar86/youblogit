@@ -58,7 +58,8 @@ public class BlogController implements IBlog {
 		this.mapper = mapper;
 	}
 
-	public Mono<Object> getPosts(@RequestParam(name = "page", required = false, defaultValue = "0") int pageIndex,
+	@Override
+	public Mono<ResponseEntity> getPosts(@RequestParam(name = "page", required = false, defaultValue = "0") int pageIndex,
 			@RequestParam(name = "size", required = true, defaultValue = "10") int pageSize,
 			@RequestParam(name = "sort", required = true, defaultValue = "id") String sort,
 			@RequestParam(name = "direction", required = true, defaultValue = "DESC") Sort.Direction direction) {
@@ -69,7 +70,6 @@ public class BlogController implements IBlog {
 		Flux<PostRankingDTO> postRankings = avgRankings.collectMap(PostRanking::getPostId, PostRanking::getAvgRanking)
 				.flatMapMany(rankings -> posts.handle((post, sink) -> {
 					Long postId = post.getId();
-					System.out.println(rankings.keySet());
 					if (rankings.keySet().contains(postId)) {
 						Float ranking = rankings.get(postId);
 						PostRankingDTO complete = new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(),
@@ -83,13 +83,13 @@ public class BlogController implements IBlog {
 					}
 				}));
 		return Mono.zip(values -> createPostsAggregate((ClientResponse) values[0], (List<PostRankingDTO>) values[1]),
-				monoReponse, postRankings.collectList());
+				monoReponse, postRankings.collectList()).cast(ResponseEntity.class);
 	}
 
 	private ResponseEntity<List<PostRankingDTO>> createPostsAggregate(ClientResponse response,
 			List<PostRankingDTO> list) {
 		List<String> links = response.headers().header("Link").stream()
-				.map(link -> link.replaceAll("posts", "blogposts")).collect(Collectors.toList());
+				.map(link -> link.replaceAll("posts", "blog-post")).collect(Collectors.toList());
 		List<String> xTotalCount = response.headers().header("X-Total-Count");
 		HttpHeaders headers = new HttpHeaders();
 		headers.addAll("X-Total-Count", xTotalCount);
@@ -97,6 +97,7 @@ public class BlogController implements IBlog {
 		return ResponseEntity.ok().headers(headers).body(list);
 	}
 
+	@Override
 	public Mono<PostRankingDTO> getPost(@PathVariable Integer postId, Integer delay, Integer faultPercent) {
 		return Mono
 				.zip(values -> createPostAggregate(

@@ -35,17 +35,3 @@ spring.cloud.stream.rabbit.bindings.input.consumer:
 
 spring.cloud.stream.kafka.bindings.input.consumer:
   enableDlq: true
-
----
-spring.profiles: streaming_partitioned
-spring.cloud.stream.bindings.input.consumer:
-  partitioned: true
-  instanceCount: 2
-
----
-spring.profiles: streaming_instance_0
-spring.cloud.stream.bindings.input.consumer.instanceIndex: 0
-
----
-spring.profiles: streaming_instance_1
-spring.cloud.stream.bindings.input.consumer.instanceIndex: 1
