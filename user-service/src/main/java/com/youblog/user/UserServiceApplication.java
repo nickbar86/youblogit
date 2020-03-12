@@ -1,11 +1,10 @@
-package com.youblog.posts;
+package com.youblog.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -14,17 +13,17 @@ import brave.sampler.Sampler;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan("com.youblog.posts")
-public class PostsApplication {
+@ComponentScan("com.youblog.user")
+public class UserServiceApplication {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PostsApplication.class);
-
+	private static final Logger LOG = LoggerFactory.getLogger(UserServiceApplication.class);
+	
 	public static void main(String[] args) {
-		ConfigurableApplicationContext ctx = SpringApplication.run(PostsApplication.class, args);
+		ConfigurableApplicationContext ctx = SpringApplication.run(UserServiceApplication.class, args);
 		String mysqlUri = ctx.getEnvironment().getProperty("spring.datasource.url");
 		LOG.info("Connected to MySQL: " + mysqlUri);
 	}
-
+	
 	@Bean
 	public Sampler defaultSampler() {
 		return Sampler.ALWAYS_SAMPLE;
