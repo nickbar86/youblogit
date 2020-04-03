@@ -12,13 +12,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -44,6 +43,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.youblog.authorization.proxies.UserServiceProxy;
 
 @EnableAuthorizationServer
 @Configuration
@@ -124,6 +127,13 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 @Configuration
 class UserConfig extends WebSecurityConfigurerAdapter {
 
+	private UserServiceProxy userService;
+
+	@Autowired
+	public UserConfig(UserServiceProxy userService) {
+		this.userService = userService;
+	}
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/actuator/**").permitAll().mvcMatchers("/.well-known/jwks.json")
@@ -131,12 +141,25 @@ class UserConfig extends WebSecurityConfigurerAdapter {
 				.ignoringRequestMatchers(request -> "/introspect".equals(request.getRequestURI()));
 	}
 
+	@Override
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(new DirectoryUserDetailsService(this.userService));
+	}
+	
 	@Bean
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+	    // ALTHOUGH THIS SEEMS LIKE USELESS CODE,
+	    // IT'S REQUIRED TO PREVENT SPRING BOOT AUTO-CONFIGURATION
+	    return super.authenticationManagerBean();
+	}
+
+
+	/*@Bean
 	@Override
 	public UserDetailsService userDetailsService() {
-		return new InMemoryUserDetailsManager(
-				User.withDefaultPasswordEncoder().username("admin").password("this is an admin password").roles("USER").build());
-	}
+		return new InMemoryUserDetailsManager(User.withDefaultPasswordEncoder().username("admin")
+				.password("test").roles("USER").build());
+	}*/
 }
 
 /**

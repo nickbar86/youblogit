@@ -1,0 +1,17 @@
+server.port: 7001
+spring:
+  application:
+    jpa:
+      show-sql: true  
+# Strongly recommend to set this property to "none" in a production environment!
+spring.jpa.hibernate.ddl-auto: create-drop
+spring.datasource.initialization-mode: always
+
+datasource:
+    platform: h2 
+    url: jdbc:h2:mem:javatpoint 
+    
+h2:
+  console:
+    enabled: true
+  spring.cloud.gcp.trace.enabled: false

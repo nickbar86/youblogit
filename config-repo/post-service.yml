@@ -8,7 +8,7 @@ spring.jpa.hibernate.ddl-auto: create-drop
 spring.datasource.initialization-mode: always
 
 spring.datasource:
-  url: jdbc:mysql://localhost/posts
+  url: jdbc:mysql://127.0.0.1/posts
   username: root
   password: pwd
 

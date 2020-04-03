@@ -1,0 +1,43 @@
+server.port: 7000
+
+ribbon.ServerListRefreshInterval: 5000
+
+ribbon.NFLoadBalancerPingInterval: 5
+
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
+
+app.post-service.timeoutSec: 2
+app.review-service.timeoutSec: 2
+
+resilience4j.retry:
+  backends:
+    post-service:
+      maxRetryAttempts: 3
+      waitDuration: 1000
+      retryExceptions:
+      - org.springframework.web.reactive.function.client.WebClientResponseException$InternalServerError
+
+resilience4j.circuitbreaker:
+  backends:
+    post-service:
+      registerHealthIndicator: true
+      ringBufferSizeInClosedState: 5
+      failureRateThreshold: 50
+      waitInterval: 10000
+      ringBufferSizeInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      ignoreExceptions:
+        - com.youblog.util.exceptions.InvalidInputException
+        - com.youblog.util.exceptions.NotFoundException
+
+resilience4j.bulkhead:
+    instances:
+        post-service:
+            maxConcurrentCalls: 10
+
+logging:
+  level:
+    root: INFO
+    com.youblog: DEBUG
+    org.springframework.web.server.adapter.HttpWebHandlerAdapter: TRACE
+

@@ -8,12 +8,13 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import brave.sampler.Sampler;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan("com.youblog.user")
+//@ComponentScan("com.youblog.user")
 public class UserServiceApplication {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UserServiceApplication.class);
@@ -30,8 +31,9 @@ public class UserServiceApplication {
 	}
 
 	@Bean
-	feign.Logger.Level feignLoggerLevel() {
-		return feign.Logger.Level.BASIC;
-	}
+    public BCryptPasswordEncoder passwordEncoder() {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder;
+    }
 
 }
