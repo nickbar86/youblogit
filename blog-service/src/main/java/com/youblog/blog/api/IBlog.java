@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.youblog.blog.services.dto.BlogUserDTO;
+import com.youblog.blog.services.dto.BlogUserInfoDTO;
 import com.youblog.blog.services.dto.PostDTO;
 import com.youblog.blog.services.dto.PostRankingDTO;
 import com.youblog.blog.services.dto.ReviewDTO;
@@ -63,5 +65,25 @@ public interface IBlog {
 	@CrossOrigin(origins = "http://localhost:3000")
 	@DeleteMapping(value = "/blog-post/reviews/{reviewId}/")
 	public Mono<Void> deleteReview(@PathVariable int reviewId);
+	
+	@CrossOrigin(origins = "http://localhost:3000")
+	@PutMapping(value = "/blog-post/users/", consumes = "application/json")
+	public Mono<BlogUserInfoDTO> createNewUser(@RequestBody BlogUserDTO body);
+	
+	@CrossOrigin(origins = "http://localhost:3000")
+	@PostMapping(value = "/blog-post/users/", consumes = "application/json")
+	public Mono<BlogUserInfoDTO> updateExistingUser(@RequestBody BlogUserDTO body);
+	
+	@CrossOrigin(origins = "http://localhost:3000")
+	@DeleteMapping(value = "/blog-post/users/{userId}/")
+	public Mono<Void> deleteUser(@PathVariable int userId);
+	
+	@CrossOrigin(origins = "http://localhost:3000")
+	@GetMapping(value = "/blog-post/users/", consumes = "application/json")
+	public Flux<BlogUserInfoDTO> fetchUsers();
+	
+	//@CrossOrigin(origins = "http://localhost:3000")
+	//@PutMapping(value = "/blog-post/users/{userId}/enable/{enable}", consumes = "application/json")
+	//public Mono<Boolean> enableUser(@PathVariable int userId,@PathVariable boolean enable);
 
 }

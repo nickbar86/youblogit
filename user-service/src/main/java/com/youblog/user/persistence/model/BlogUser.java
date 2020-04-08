@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -28,7 +29,16 @@ public class BlogUser {
 	@Column(insertable = true, updatable = false)
 	private LocalDateTime created;
 	private LocalDateTime modified;
-	
+	@Version
+	private int version;
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
 
 	public Integer getId() {
 		return id;
@@ -95,14 +105,13 @@ public class BlogUser {
 	}
 
 	public BlogUser() {
-    }
+	}
 
 	public BlogUser(String email, String name, String password) {
 		this.email = email;
 		this.name = name;
 		this.password = password;
 	}
-
 
 	public BlogUser(String email, String name, String password, String role, boolean enabled) {
 		this(email, name, password);
@@ -133,6 +142,7 @@ public class BlogUser {
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((role == null) ? 0 : role.hashCode());
+		result = prime * result + version;
 		return result;
 	}
 
@@ -182,8 +192,9 @@ public class BlogUser {
 				return false;
 		} else if (!role.equals(other.role))
 			return false;
+		if (version != other.version)
+			return false;
 		return true;
 	}
 
-	
 }

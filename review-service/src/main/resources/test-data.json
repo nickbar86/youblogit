@@ -1,18 +1,18 @@
-[
-	{
-		"_class": "com.youblog.review.persistence.model.Review",
-		"datePosted": new Date(),
-		"userId": "1",
-		"postId": 2,
-		"review": "nice",
-		"ranking": "20"
-	},
-	{
-		"_class": "com.youblog.review.persistence.model.Review",
-		"datePosted": new Date(),
-		"userId": "1",
-		"postId": 2,
-		"review": "nice",
-		"ranking": "30"
-	}
-]
+	[
+		{
+			"_class": "com.youblog.review.persistence.model.Review",
+			"datePosted": new Date(),
+			"userId": 2,
+			"postId": 2,
+			"review": "nice",
+			"ranking": 20
+		},
+		{
+			"_class": "com.youblog.review.persistence.model.Review",
+			"datePosted": new Date(),
+			"userId": 2,
+			"postId": 2,
+			"review": "nice",
+			"ranking": 30
+		}
+	]

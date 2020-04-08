@@ -107,7 +107,8 @@ public class MessageProcessorTest {
 		Post entity = new Post();
 		entity.setContent("This is a test 1");
 		entity.setDatePosted(LocalDateTime.now());
-		entity.setEditorName("Test Editor 1");
+		entity.setDateUpdated(LocalDateTime.now());
+		entity.setBlogUserId(1);
 		entity.setPort(123);
 		entity.setSummary("Test Summary 1");
 		entity.setTitle("Test 1");
@@ -125,7 +126,8 @@ public class MessageProcessorTest {
 		Post entityupdated = new Post();
 		entityupdated.setContent("This is a test 2");
 		entityupdated.setDatePosted(LocalDateTime.now());
-		entityupdated.setEditorName("Test Editor 2");
+		entityupdated.setDateUpdated(LocalDateTime.now());
+		entityupdated.setBlogUserId(2);
 		entityupdated.setPort(123);
 		entityupdated.setSummary("Test Summary 2");
 		entityupdated.setTitle("Test 2");

@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.youblog.blog.api.IBlog;
 import com.youblog.blog.services.BlogPostsIntegration;
+import com.youblog.blog.services.dto.BlogUserDTO;
+import com.youblog.blog.services.dto.BlogUserDetails;
+import com.youblog.blog.services.dto.BlogUserInfoDTO;
 import com.youblog.blog.services.dto.PostDTO;
 import com.youblog.blog.services.dto.PostRanking;
 import com.youblog.blog.services.dto.PostRankingDTO;
@@ -59,7 +65,8 @@ public class BlogController implements IBlog {
 	}
 
 	@Override
-	public Mono<ResponseEntity> getPosts(@RequestParam(name = "page", required = false, defaultValue = "0") int pageIndex,
+	public Mono<ResponseEntity> getPosts(
+			@RequestParam(name = "page", required = false, defaultValue = "0") int pageIndex,
 			@RequestParam(name = "size", required = true, defaultValue = "10") int pageSize,
 			@RequestParam(name = "sort", required = true, defaultValue = "id") String sort,
 			@RequestParam(name = "direction", required = true, defaultValue = "DESC") Sort.Direction direction) {
@@ -68,22 +75,30 @@ public class BlogController implements IBlog {
 		Flux<PostDTO> posts = monoReponse.flatMapMany(response -> response.bodyToFlux(PostDTO.class).log());
 		Flux<PostRanking> avgRankings = posts.flatMap(post -> integration.getPostAvgRanking(post.getId()));
 		Flux<PostRankingDTO> postRankings = avgRankings.collectMap(PostRanking::getPostId, PostRanking::getAvgRanking)
-				.flatMapMany(rankings -> posts.handle((post, sink) -> {
-					Long postId = post.getId();
-					if (rankings.keySet().contains(postId)) {
-						Float ranking = rankings.get(postId);
-						PostRankingDTO complete = new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(),
-								post.getSummary(), post.getContent(), post.getDatePosted(), post.getEditorName(),
-								ranking);
-						sink.next(complete);
-					} else {
-						PostRankingDTO complete = new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(),
-								post.getSummary(), post.getContent(), post.getDatePosted(), post.getEditorName(), null);
-						sink.next(complete);
-					}
-				}));
+				.flatMapMany(mapToPostRankingDTO(posts));
 		return Mono.zip(values -> createPostsAggregate((ClientResponse) values[0], (List<PostRankingDTO>) values[1]),
 				monoReponse, postRankings.collectList()).cast(ResponseEntity.class);
+	}
+
+	private Function<? super Map<Long, Float>, ? extends Publisher<? extends PostRankingDTO>> mapToPostRankingDTO(
+			Flux<PostDTO> posts) {
+		return rankings -> posts.handle((post, sink) -> {
+			Long postId = post.getId();
+			Mono<BlogUserDetails> userDetailMono = integration.getUser(post.getBlogUserId());
+			
+			if (rankings.keySet().contains(postId)) {
+				Float ranking = rankings.get(postId);
+				PostRankingDTO complete = new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(),
+						post.getSummary(), post.getContent(), post.getDatePosted(), post.getBlogUserId(),
+						ranking);
+				//complete.setUser(userDetail);
+				sink.next(complete);
+			} else {
+				PostRankingDTO complete = new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(),
+						post.getSummary(), post.getContent(), post.getDatePosted(), post.getBlogUserId(), null);
+				sink.next(complete);
+			}
+		});
 	}
 
 	private ResponseEntity<List<PostRankingDTO>> createPostsAggregate(ClientResponse response,
@@ -99,7 +114,7 @@ public class BlogController implements IBlog {
 
 	@Override
 	public Mono<PostRankingDTO> getPost(@PathVariable Integer postId, Integer delay, Integer faultPercent) {
-		return Mono
+		Mono<PostRankingDTO> postRankingMono = Mono
 				.zip(values -> createPostAggregate(
 						(SecurityContext) values[0], (PostDTO) values[1], (PostRanking) values[2]),
 						ReactiveSecurityContextHolder.getContext().defaultIfEmpty(nullSC),
@@ -110,7 +125,19 @@ public class BlogController implements IBlog {
 								.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
 								.onErrorReturn(CircuitBreakerOpenException.class, getRankingFallbackValue()))
 				.doOnError(ex -> LOG.warn("getPost failed: {}", ex.toString())).log();
+		Mono<BlogUserDetails> userDetail = postRankingMono.flatMap(post->{
+			return integration.getUser(post.getBlogUserId());
+		});
+		return Mono
+				.zip(values-> creatPostAggregateWithUser((PostRankingDTO)values[0], (BlogUserDetails)values[1] ),
+						postRankingMono,
+						userDetail);
 
+	}
+
+	private PostRankingDTO creatPostAggregateWithUser(PostRankingDTO postRankingDTO, BlogUserDetails blogUserDetails) {
+		postRankingDTO.setUser(blogUserDetails);
+		return postRankingDTO;
 	}
 
 	private PostDTO getPostFallbackValue(int postId) {
@@ -126,7 +153,7 @@ public class BlogController implements IBlog {
 	private PostRankingDTO createPostAggregate(SecurityContext sc, PostDTO post, PostRanking avgRanking) {
 		logAuthorizationInfo(sc);
 		return new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(), post.getSummary(), post.getContent(),
-				post.getDatePosted(), post.getEditorName(), avgRanking.getAvgRanking());
+				post.getDatePosted(), post.getBlogUserId(), avgRanking.getAvgRanking());
 	}
 
 	@Override
@@ -314,5 +341,36 @@ public class BlogController implements IBlog {
 			LOG.warn("internalDeleteReview failed: {}", re.toString());
 			throw re;
 		}
+	}
+
+	@Override
+	public Mono<BlogUserInfoDTO> createNewUser(BlogUserDTO body) {
+		return integration.createNewUser(body)
+				.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
+				.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue(body));
+
+	}
+
+	private BlogUserInfoDTO getUserFallbackValue(BlogUserDTO body) {
+		// TODO Auto-generated method stub
+		return new BlogUserInfoDTO();
+	}
+
+	@Override
+	public Mono<BlogUserInfoDTO> updateExistingUser(BlogUserDTO body) {
+		return integration.updateExistingUser(body)
+				.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
+				.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue(body));
+	}
+
+	@Override
+	public Mono<Void> deleteUser(int userId) {
+		return integration.deleteUser(userId).onErrorMap(RetryExceptionWrapper.class,
+				retryException -> retryException.getCause());
+	}
+
+	@Override
+	public Flux<BlogUserInfoDTO> fetchUsers() {
+		return integration.getUsers();
 	}
 }

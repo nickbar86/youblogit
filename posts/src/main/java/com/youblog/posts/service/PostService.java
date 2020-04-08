@@ -59,7 +59,6 @@ public class PostService {
 
 	public PostDTO savePost(PostDTO post) {
 		logger.info("Saving Post");
-		post.setDatePosted(LocalDateTime.now());
 		PostDTO updatedResp = mapper.entityToApi(repository.save(mapper.apiToEntity(post)));
 		logger.info("Saves Post " + updatedResp.getId());
 		return updatedResp;
@@ -76,7 +75,6 @@ public class PostService {
 		entity.setContent(data.getContent());
 		entity.setSummary(data.getSummary());
 		entity.setTitle(data.getTitle());
-		entity.setDatePosted(LocalDateTime.now());
 		repository.save(entity);
 		return data;
 	}

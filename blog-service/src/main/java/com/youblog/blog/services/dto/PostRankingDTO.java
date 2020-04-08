@@ -4,10 +4,11 @@ import java.time.LocalDateTime;
 
 public class PostRankingDTO extends PostDTO {
 	private Float ranking;
+	private BlogUserDetails user;
 
 	public PostRankingDTO(long id, String port, String title, String summary, String content, LocalDateTime datePosted,
-			String editorName, Float ranking) {
-		super(id, port, title, summary, content, datePosted, editorName);
+			Integer userId, Float ranking) {
+		super(id, port, title, summary, content, datePosted, userId);
 		this.setRanking(ranking);
 	}
 
@@ -19,4 +20,11 @@ public class PostRankingDTO extends PostDTO {
 		this.ranking = ranking;
 	}
 
+	public BlogUserDetails getUser() {
+		return user;
+	}
+
+	public void setUser(BlogUserDetails user) {
+		this.user = user;
+	}
 }

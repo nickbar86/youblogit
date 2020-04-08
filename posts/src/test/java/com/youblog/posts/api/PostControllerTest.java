@@ -108,7 +108,8 @@ public class PostControllerTest {
 		Post orginalPost = new Post();
 		orginalPost.setContent("This is a test 1");
 		orginalPost.setDatePosted(LocalDateTime.now());
-		orginalPost.setEditorName("Test Editor 1");
+		orginalPost.setDateUpdated(LocalDateTime.now());
+		orginalPost.setBlogUserId(1);
 		orginalPost.setPort(123);
 		orginalPost.setSummary("Test Summary 1");
 		orginalPost.setTitle("Test 1");
@@ -138,14 +139,15 @@ public class PostControllerTest {
 	void givenPostDTOCreatePostAndReturnPostDTO() throws Exception {
 		Post entity = new Post();
 		entity.setContent("This is a test 1");
-		entity.setEditorName("Test Editor 1");
+		entity.setBlogUserId(1);
 		entity.setPort(123);
 		entity.setSummary("Test Summary 1");
 		entity.setTitle("Test 1");
 		Post entityWithId = new Post();
 		entityWithId.setContent("This is a test 1");
 		entityWithId.setDatePosted(LocalDateTime.now());
-		entityWithId.setEditorName("Test Editor 1");
+		entityWithId.setDateUpdated(LocalDateTime.now());
+		entityWithId.setBlogUserId(1);
 		entityWithId.setPort(123);
 		entityWithId.setSummary("Test Summary 1");
 		entityWithId.setTitle("Test 1");
@@ -178,7 +180,8 @@ public class PostControllerTest {
 		Post entityupdated = new Post();
 		entityupdated.setContent("This is a test 1");
 		entityupdated.setDatePosted(LocalDateTime.now());
-		entityupdated.setEditorName("Test Editor 1");
+		entityupdated.setDateUpdated(LocalDateTime.now());
+		entityupdated.setBlogUserId(1);
 		entityupdated.setPort(123);
 		entityupdated.setSummary("Test Summary 1");
 		entityupdated.setTitle("Test 1");

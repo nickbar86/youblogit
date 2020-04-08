@@ -11,16 +11,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.MediaType;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunctions;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.youblog.blog.services.dto.BlogUserDTO;
+import com.youblog.blog.services.dto.BlogUserDetails;
+import com.youblog.blog.services.dto.BlogUserInfoDTO;
 import com.youblog.blog.services.dto.PostDTO;
 import com.youblog.blog.services.dto.PostRanking;
 import com.youblog.blog.services.dto.ReviewDTO;
@@ -43,16 +48,19 @@ public class BlogPostsIntegration {
 
 	private final String postServiceUrl = "http://post-service";
 	private final String reviewServiceUrl = "http://review-service";
+	private final String userServiceUrl = "http://user-service";
 
 	private final ObjectMapper mapper;
 	private final WebClient.Builder webClientBuilder;
 
 	private WebClient webClient;
+	private WebClient authenticatedWebClient;
 
 	private final MessageSources messageSources;
 
 	private final int postServiceTimeoutSec;
 	private final int reviewServiceTimeoutSec;
+	private final int userServiceTimeoutSec;
 
 	public interface MessageSources {
 
@@ -69,7 +77,8 @@ public class BlogPostsIntegration {
 	@Autowired
 	public BlogPostsIntegration(WebClient.Builder webClientBuilder, ObjectMapper mapper, MessageSources messageSources,
 			@Value("${app.post-service.timeoutSec}") int postServiceTimeoutSec,
-			@Value("${app.review-service.timeoutSec}") int reviewServiceTimeoutSec
+			@Value("${app.review-service.timeoutSec}") int reviewServiceTimeoutSec,
+			@Value("${app.user-service.timeoutSec}") int userServiceTimeoutSec
 
 	) {
 		this.webClientBuilder = webClientBuilder;
@@ -77,6 +86,7 @@ public class BlogPostsIntegration {
 		this.messageSources = messageSources;
 		this.postServiceTimeoutSec = postServiceTimeoutSec;
 		this.reviewServiceTimeoutSec = reviewServiceTimeoutSec;
+		this.userServiceTimeoutSec = userServiceTimeoutSec;
 	}
 
 	public PostDTO createPost(PostDTO body) {
@@ -140,6 +150,13 @@ public class BlogPostsIntegration {
 			webClient = webClientBuilder.build();
 		}
 		return webClient;
+	}
+	
+	private WebClient getAuthenticatedClient() {
+		if (authenticatedWebClient==null) {
+			authenticatedWebClient  = webClientBuilder.filter(ExchangeFilterFunctions.basicAuthentication("nick@example.com", "secret")).build();
+		}
+		return authenticatedWebClient;
 	}
 
 	private Throwable handleException(Throwable ex) {
@@ -208,5 +225,54 @@ public class BlogPostsIntegration {
 	public void deletePostReviews(int postId) {
 		messageSources.outputReviews()
 				.send(MessageBuilder.withPayload(new Event(Type.DELETE, "postId:" + postId, null)).build());
+	}
+
+	@CircuitBreaker(name = "user-service")
+	public Mono<BlogUserInfoDTO> createNewUser(BlogUserDTO body) {
+		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/users/").build();
+		LOG.debug("Will call the create User API on URL: {}", url);
+		return getAuthenticatedClient().put().uri(url.getPath()).contentType(MediaType.APPLICATION_JSON).bodyValue(body)
+				.retrieve().bodyToMono(BlogUserInfoDTO.class).log()
+				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.timeout(Duration.ofSeconds(userServiceTimeoutSec));
+	}
+
+	@Retry(name = "user-service")
+	@CircuitBreaker(name = "user-service")
+	public Mono<BlogUserInfoDTO> updateExistingUser(BlogUserDTO body) {
+		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/users/").build();
+		LOG.debug("Will call the update User API on URL: {}", url);
+		return getAuthenticatedClient().post().uri(url.getPath()).contentType(MediaType.APPLICATION_JSON).bodyValue(body)
+				.retrieve().bodyToMono(BlogUserInfoDTO.class).log()
+				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
+	}
+
+	@CircuitBreaker(name = "user-service")
+	public Flux<BlogUserInfoDTO> getUsers() {
+		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/users/").build();
+		LOG.debug("Will call the create User API on URL: {}", url);
+		return getAuthenticatedClient().get().uri(url.getPath()).retrieve().bodyToFlux(BlogUserInfoDTO.class).log()
+				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
+	}
+
+	@CircuitBreaker(name = "user-service")
+	public Mono<Void> deleteUser(int userId) {
+		URI url = UriComponentsBuilder.fromUriString(userServiceUrl + "/users/{userId}").build(userId);
+		LOG.debug("Will call the delete User API on URL: {}", url);
+		return getAuthenticatedClient().delete().uri(url.getPath()).exchange()
+				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec)).then();
+	}
+
+	@Retry(name = "user-service")
+	@CircuitBreaker(name = "user-service")
+	public Mono<BlogUserDetails> getUser(Integer userId) {
+		URI url = UriComponentsBuilder.fromUriString(userServiceUrl + "/blogUsers/{userId}").build(userId);
+		LOG.debug("Will call the getUserDetails API on URL: {}", url);
+		return getAuthenticatedClient().get().uri(url).retrieve().bodyToMono(BlogUserDetails.class).log()
+				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}
 }

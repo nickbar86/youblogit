@@ -34,7 +34,8 @@ public class PostMapperSpec {
 		Post newEntity = mapper.apiToEntity(dto);
 		assertEquals(dto.getContent(), newEntity.getContent());
 		assertEquals(dto.getDatePosted(), newEntity.getDatePosted());
-		assertEquals(dto.getEditorName(), newEntity.getEditorName());
+		assertEquals(dto.getDateUpdated(), newEntity.getDateUpdated());
+		assertEquals(dto.getBlogUserId(), newEntity.getBlogUserId());
 		assertEquals(dto.getPort(), newEntity.getPort());
 		assertEquals(dto.getSummary(), newEntity.getSummary());
 		assertEquals(dto.getTitle(), newEntity.getTitle());
@@ -47,7 +48,8 @@ public class PostMapperSpec {
 		PostDTO newDto = mapper.entityToApi(entity);
 		assertEquals(newDto.getContent(), entity.getContent());
 		assertEquals(newDto.getDatePosted(), entity.getDatePosted());
-		assertEquals(newDto.getEditorName(), entity.getEditorName());
+		assertEquals(newDto.getDateUpdated(), entity.getDateUpdated());
+		assertEquals(newDto.getBlogUserId(), entity.getBlogUserId());
 		assertEquals(newDto.getPort(), entity.getPort());
 		assertEquals(newDto.getSummary(), entity.getSummary());
 		assertEquals(newDto.getTitle(), entity.getTitle());

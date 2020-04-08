@@ -9,16 +9,18 @@ public class PostDTO {
 	private String summary;
 	private String content;
 	private LocalDateTime datePosted;
-	private String editorName;
+	private LocalDateTime dateUpdated;
+	private Integer blogUserId;
 
-	public PostDTO(long id, int port, String title, String summary, String content, LocalDateTime datePosted, String editorName) {
+	public PostDTO(long id, int port, String title, String summary, String content, LocalDateTime datePosted, LocalDateTime dateUpdated, Integer blogUserId) {
 		this.id = id;
 		this.port = port;
 		this.title = title;
 		this.summary = summary;
 		this.content = content;
 		this.datePosted = datePosted;
-		this.editorName = editorName;
+		this.dateUpdated = dateUpdated;
+		this.blogUserId = blogUserId;
 	}
 	
 	
@@ -77,12 +79,28 @@ public class PostDTO {
 		this.datePosted = datePosted;
 	}
 
-	public String getEditorName() {
-		return editorName;
+
+
+	public LocalDateTime getDateUpdated() {
+		return dateUpdated;
 	}
 
-	public void setEditorName(String editorName) {
-		this.editorName = editorName;
+
+
+	public void setDateUpdated(LocalDateTime dateUpdated) {
+		this.dateUpdated = dateUpdated;
+	}
+
+
+
+	public Integer getBlogUserId() {
+		return blogUserId;
+	}
+
+
+
+	public void setBlogUserId(Integer blogUserId) {
+		this.blogUserId = blogUserId;
 	}
 
 

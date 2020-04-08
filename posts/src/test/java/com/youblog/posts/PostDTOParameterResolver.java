@@ -22,7 +22,8 @@ public class PostDTOParameterResolver implements ParameterResolver {
 		PostDTO dto = new PostDTO();
 		dto.setContent("This is a test 1");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 1));
-		dto.setEditorName("Test Editor 1");
+		dto.setDateUpdated(LocalDateTime.of(2020, 1, 1, 1, 1));
+		dto.setBlogUserId(1);
 		dto.setPort(123);
 		dto.setSummary("Test Summary 1");
 		dto.setTitle("Test 1");
@@ -32,7 +33,8 @@ public class PostDTOParameterResolver implements ParameterResolver {
 		dto = new PostDTO();
 		dto.setContent("This is a test 2");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 2));
-		dto.setEditorName("Test Editor 2");
+		dto.setDateUpdated(LocalDateTime.of(2020, 1, 1, 1, 2));
+		dto.setBlogUserId(2);
 		dto.setPort(123);
 		dto.setSummary("Test Summary 2");
 		dto.setTitle("Test 2");
@@ -42,7 +44,8 @@ public class PostDTOParameterResolver implements ParameterResolver {
 		dto = new PostDTO();
 		dto.setContent("This is a test 3");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 3));
-		dto.setEditorName("Test Editor 3");
+		dto.setDateUpdated(LocalDateTime.of(2020, 1, 1, 1, 3));
+		dto.setBlogUserId(3);
 		dto.setPort(123);
 		dto.setSummary("Test Summary 3");
 		dto.setTitle("Test 3");
@@ -52,7 +55,8 @@ public class PostDTOParameterResolver implements ParameterResolver {
 		dto = new PostDTO();
 		dto.setContent("This is a test 4");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 4));
-		dto.setEditorName("Test Editor 4");
+		dto.setDateUpdated(LocalDateTime.of(2020, 1, 1, 1, 4));
+		dto.setBlogUserId(4);
 		dto.setPort(123);
 		dto.setSummary("Test Summary 4");
 		dto.setTitle("Test 4");
@@ -62,7 +66,8 @@ public class PostDTOParameterResolver implements ParameterResolver {
 		dto = new PostDTO();
 		dto.setContent("This is a test 2");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 5));
-		dto.setEditorName("Test Editor 5");
+		dto.setDateUpdated(LocalDateTime.of(2020, 1, 1, 1, 5));
+		dto.setBlogUserId(5);
 		dto.setPort(123);
 		dto.setSummary("Test Summary 5");
 		dto.setTitle("Test 5");
@@ -72,7 +77,8 @@ public class PostDTOParameterResolver implements ParameterResolver {
 		dto = new PostDTO();
 		dto.setContent("This is a test 6");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 6));
-		dto.setEditorName("Test Editor 6");
+		dto.setDateUpdated(LocalDateTime.of(2020, 1, 1, 1, 6));
+		dto.setBlogUserId(6);
 		dto.setPort(123);
 		dto.setSummary("Test Summary 6");
 		dto.setTitle("Test 6");
@@ -82,7 +88,8 @@ public class PostDTOParameterResolver implements ParameterResolver {
 		dto = new PostDTO();
 		dto.setContent("This is a test 7");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 7));
-		dto.setEditorName("Test Editor 7");
+		dto.setDateUpdated(LocalDateTime.of(2020, 1, 1, 1, 7));
+		dto.setBlogUserId(7);
 		dto.setPort(123);
 		dto.setSummary("Test Summary 7");
 		dto.setTitle("Test 7");
@@ -92,7 +99,8 @@ public class PostDTOParameterResolver implements ParameterResolver {
 		dto = new PostDTO();
 		dto.setContent("This is a test 8");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 8));
-		dto.setEditorName("Test Editor 8");
+		dto.setDateUpdated(LocalDateTime.of(2020, 1, 1, 1, 8));
+		dto.setBlogUserId(8);
 		dto.setPort(123);
 		dto.setSummary("Test Summary 8");
 		dto.setTitle("Test 8");
@@ -102,7 +110,8 @@ public class PostDTOParameterResolver implements ParameterResolver {
 		dto = new PostDTO();
 		dto.setContent("This is a test 9");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 9));
-		dto.setEditorName("Test Editor 9");
+		dto.setDateUpdated(LocalDateTime.of(2020, 1, 1, 1, 9));
+		dto.setBlogUserId(9);
 		dto.setPort(123);
 		dto.setSummary("Test Summary 9");
 		dto.setTitle("Test 9");
@@ -112,7 +121,8 @@ public class PostDTOParameterResolver implements ParameterResolver {
 		dto = new PostDTO();
 		dto.setContent("This is a test 10");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 10));
-		dto.setEditorName("Test Editor 10");
+		dto.setDateUpdated(LocalDateTime.of(2020, 1, 1, 1, 10));
+		dto.setBlogUserId(10);
 		dto.setPort(123);
 		dto.setSummary("Test Summary 10");
 		dto.setTitle("Test 10");
@@ -122,7 +132,8 @@ public class PostDTOParameterResolver implements ParameterResolver {
 		dto = new PostDTO();
 		dto.setContent("This is a test 11");
 		dto.setDatePosted(LocalDateTime.of(2020, 1, 1, 1, 11));
-		dto.setEditorName("Test Editor 11");
+		dto.setDateUpdated(LocalDateTime.of(2020, 1, 1, 1, 11));
+		dto.setBlogUserId(11);
 		dto.setPort(123);
 		dto.setSummary("Test Summary 11");
 		dto.setTitle("Test 11");

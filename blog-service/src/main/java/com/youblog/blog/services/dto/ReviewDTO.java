@@ -35,10 +35,6 @@ public class ReviewDTO {
 		this.datePosted = datePosted;
 	}
 
-	public void setUserId(Integer userId) {
-		this.userId = userId;
-	}
-
 	public void setPostId(Long postId) {
 		this.postId = postId;
 	}
@@ -59,10 +55,6 @@ public class ReviewDTO {
 		return datePosted;
 	}
 
-	public Integer getUserId() {
-		return userId;
-	}
-
 	public Long getPostId() {
 		return postId;
 	}
@@ -75,4 +67,12 @@ public class ReviewDTO {
 		return ranking;
 	}
 
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+	
 }

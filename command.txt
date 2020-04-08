@@ -5,7 +5,7 @@ mvn package -Dmaven.test.skip=true; cd ..; cd  netflix-eureka-naming-server/; mv
 
 
 //password access
-ACCESS_TOKEN=$(curl -k https://writer:secret@localhost:8443/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
+ACCESS_TOKEN=$(curl -k https://writer:secret@localhost:8443/oauth/token -d grant_type=password -d username=maria@example.com -d password=secret -s | jq .access_token -r)
 AUTH="-H \"Authorization: Bearer $ACCESS_TOKEN\""
 READER_ACCESS_TOKEN=$(curl -k https://reader:secret@localhost:8443/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
 AUTH_READER="-H \"Authorization: Bearer $READER_ACCESS_TOKEN\""
