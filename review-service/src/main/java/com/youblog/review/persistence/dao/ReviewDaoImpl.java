@@ -31,7 +31,7 @@ public class ReviewDaoImpl implements ReviewDao {
 	}
 
 	private ProjectionOperation getProjectOperation() {
-		return project("_id.postId", "avgRanking");
+		return project("_id", "avgRanking");
 	}
 	GroupOperation groupByStateAndSumPop = group("postId")
 			  .sum("ranking").as("avgRanking");

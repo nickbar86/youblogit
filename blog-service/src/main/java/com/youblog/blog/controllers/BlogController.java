@@ -84,8 +84,6 @@ public class BlogController implements IBlog {
 			Flux<PostDTO> posts) {
 		return rankings -> posts.handle((post, sink) -> {
 			Long postId = post.getId();
-			Mono<BlogUserDetails> userDetailMono = integration.getUser(post.getBlogUserId());
-			
 			if (rankings.keySet().contains(postId)) {
 				Float ranking = rankings.get(postId);
 				PostRankingDTO complete = new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(),

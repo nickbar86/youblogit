@@ -23,10 +23,7 @@ export default function info(
       return {
         ...state,
         post: {
-          id: payload.id,
-          title: payload.title,
-          summary: payload.summary,
-          datePosted: payload.datePosted,
+          ...payload,
           content: EditorState.createWithContent(
             convertFromRaw(JSON.parse(payload.content))
           )

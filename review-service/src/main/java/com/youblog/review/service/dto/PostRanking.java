@@ -1,7 +1,10 @@
 package com.youblog.review.service.dto;
 
+import org.springframework.data.annotation.Id;
+
 public class PostRanking {
 
+	@Id
 	private Integer postId;
 	private Float avgRanking;
 

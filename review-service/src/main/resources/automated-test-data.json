@@ -2,17 +2,33 @@
 	{
 		"_class": "com.youblog.review.persistence.model.Review",
 		"datePosted": null,
-		"userId": "1",
+		"userId": 2,
 		"postId": 2,
 		"review": "nice",
-		"ranking": "20"
+		"ranking": 20
 	},
 	{
 		"_class": "com.youblog.review.persistence.model.Review",
 		"datePosted": null,
-		"userId": "1",
+		"userId": 2,
 		"postId": 2,
 		"review": "nice",
-		"ranking": "30"
+		"ranking": 30
+	},
+	{
+		"_class": "com.youblog.review.persistence.model.Review",
+		"datePosted": null,
+		"userId": 2,
+		"postId": 3,
+		"review": "nice",
+		"ranking": 2
+	},
+	{
+		"_class": "com.youblog.review.persistence.model.Review",
+		"datePosted": null,
+		"userId": 2,
+		"postId": 3,
+		"review": "nice",
+		"ranking": 1
 	}
 ]

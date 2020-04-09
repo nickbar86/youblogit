@@ -49,6 +49,8 @@ public class BlogPostsIntegration {
 	private final String postServiceUrl = "http://post-service";
 	private final String reviewServiceUrl = "http://review-service";
 	private final String userServiceUrl = "http://user-service";
+	private String systemAuthUsername;
+	private String systemAuthPassword;
 
 	private final ObjectMapper mapper;
 	private final WebClient.Builder webClientBuilder;
@@ -78,7 +80,9 @@ public class BlogPostsIntegration {
 	public BlogPostsIntegration(WebClient.Builder webClientBuilder, ObjectMapper mapper, MessageSources messageSources,
 			@Value("${app.post-service.timeoutSec}") int postServiceTimeoutSec,
 			@Value("${app.review-service.timeoutSec}") int reviewServiceTimeoutSec,
-			@Value("${app.user-service.timeoutSec}") int userServiceTimeoutSec
+			@Value("${app.user-service.timeoutSec}") int userServiceTimeoutSec,
+			@Value("${app.system-auth-username}")String systemAuthUsername,
+			@Value("${system-auth-password}")String systemAuthPassword
 
 	) {
 		this.webClientBuilder = webClientBuilder;
@@ -87,6 +91,8 @@ public class BlogPostsIntegration {
 		this.postServiceTimeoutSec = postServiceTimeoutSec;
 		this.reviewServiceTimeoutSec = reviewServiceTimeoutSec;
 		this.userServiceTimeoutSec = userServiceTimeoutSec;
+		this.systemAuthUsername = systemAuthUsername;
+		this.systemAuthPassword = systemAuthPassword;
 	}
 
 	public PostDTO createPost(PostDTO body) {
@@ -154,7 +160,7 @@ public class BlogPostsIntegration {
 	
 	private WebClient getAuthenticatedClient() {
 		if (authenticatedWebClient==null) {
-			authenticatedWebClient  = webClientBuilder.filter(ExchangeFilterFunctions.basicAuthentication("nick@example.com", "secret")).build();
+			authenticatedWebClient  = webClientBuilder.filter(ExchangeFilterFunctions.basicAuthentication(systemAuthUsername, systemAuthPassword)).build();
 		}
 		return authenticatedWebClient;
 	}

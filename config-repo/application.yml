@@ -4,7 +4,9 @@ app:
   eureka-password: p
   eureka-server: localhost
   auth-server: localhost
-
+  system-auth-username: system@example.com
+  system-auth-password: secret
+  
 eureka:
   client:
     serviceUrl:

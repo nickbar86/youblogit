@@ -66,8 +66,8 @@ export default function Post(props) {
                 {post.title}
               </Typography>
               <Typography component="subtitle1" color="inherit" gutterBottom>
-                {`${new Date(post.datePosted).toLocaleString()} created by ${
-                  post.editorName
+                {`${new Date(post.datePosted).toLocaleString()} by ${
+                  post.user?post.user.name:"hidden"
                 }`}
               </Typography>
             </div>

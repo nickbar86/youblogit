@@ -8,7 +8,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import com.youblog.user.persistence.model.BlogUser;
 
 import brave.sampler.Sampler;
 
@@ -36,4 +39,11 @@ public class UserServiceApplication {
         return bCryptPasswordEncoder;
     }
 
+	@Bean
+	public RepositoryRestConfigurer repositoryRestConfigurer()
+	{
+	    return RepositoryRestConfigurer.withConfig(config -> {
+	        config.exposeIdsFor(BlogUser.class);
+	    });
+	}
 }
