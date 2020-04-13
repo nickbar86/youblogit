@@ -2,6 +2,7 @@ app.config-server: localhost
 
 app.post-service.timeoutSec: 2
 app.review-service.timeoutSec: 2
+app.user-service.timeoutSec: 2
 
 spring:
   application.name: blog-service

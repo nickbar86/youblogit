@@ -10,8 +10,9 @@ import feign.auth.BasicAuthRequestInterceptor;
 public class FeignClientConfiguration {
 	private String systemAuthUsername;
 	private String systemAuthPassword;
-	public FeignClientConfiguration(@Value("${app.system-auth-username}")String systemAuthUsername,
-			@Value("${system-auth-password}")String systemAuthPassword) {
+
+	public FeignClientConfiguration(@Value("${app.system-auth-username}") String systemAuthUsername,
+			@Value("${app.system-auth-password}") String systemAuthPassword) {
 		super();
 		this.systemAuthUsername = systemAuthUsername;
 		this.systemAuthPassword = systemAuthPassword;

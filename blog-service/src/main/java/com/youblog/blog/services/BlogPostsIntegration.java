@@ -81,8 +81,8 @@ public class BlogPostsIntegration {
 			@Value("${app.post-service.timeoutSec}") int postServiceTimeoutSec,
 			@Value("${app.review-service.timeoutSec}") int reviewServiceTimeoutSec,
 			@Value("${app.user-service.timeoutSec}") int userServiceTimeoutSec,
-			@Value("${app.system-auth-username}")String systemAuthUsername,
-			@Value("${system-auth-password}")String systemAuthPassword
+			@Value("${app.system-auth-username}") String systemAuthUsername,
+			@Value("${app.system-auth-password}") String systemAuthPassword
 
 	) {
 		this.webClientBuilder = webClientBuilder;
@@ -157,10 +157,12 @@ public class BlogPostsIntegration {
 		}
 		return webClient;
 	}
-	
+
 	private WebClient getAuthenticatedClient() {
-		if (authenticatedWebClient==null) {
-			authenticatedWebClient  = webClientBuilder.filter(ExchangeFilterFunctions.basicAuthentication(systemAuthUsername, systemAuthPassword)).build();
+		if (authenticatedWebClient == null) {
+			authenticatedWebClient = webClientBuilder
+					.filter(ExchangeFilterFunctions.basicAuthentication(systemAuthUsername, systemAuthPassword))
+					.build();
 		}
 		return authenticatedWebClient;
 	}
@@ -248,8 +250,8 @@ public class BlogPostsIntegration {
 	public Mono<BlogUserInfoDTO> updateExistingUser(BlogUserDTO body) {
 		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/users/").build();
 		LOG.debug("Will call the update User API on URL: {}", url);
-		return getAuthenticatedClient().post().uri(url.getPath()).contentType(MediaType.APPLICATION_JSON).bodyValue(body)
-				.retrieve().bodyToMono(BlogUserInfoDTO.class).log()
+		return getAuthenticatedClient().post().uri(url.getPath()).contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(body).retrieve().bodyToMono(BlogUserInfoDTO.class).log()
 				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}

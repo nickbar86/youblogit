@@ -22,7 +22,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -87,9 +89,8 @@ public class BlogController implements IBlog {
 			if (rankings.keySet().contains(postId)) {
 				Float ranking = rankings.get(postId);
 				PostRankingDTO complete = new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(),
-						post.getSummary(), post.getContent(), post.getDatePosted(), post.getBlogUserId(),
-						ranking);
-				//complete.setUser(userDetail);
+						post.getSummary(), post.getContent(), post.getDatePosted(), post.getBlogUserId(), ranking);
+				// complete.setUser(userDetail);
 				sink.next(complete);
 			} else {
 				PostRankingDTO complete = new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(),
@@ -123,13 +124,11 @@ public class BlogController implements IBlog {
 								.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
 								.onErrorReturn(CircuitBreakerOpenException.class, getRankingFallbackValue()))
 				.doOnError(ex -> LOG.warn("getPost failed: {}", ex.toString())).log();
-		Mono<BlogUserDetails> userDetail = postRankingMono.flatMap(post->{
+		Mono<BlogUserDetails> userDetail = postRankingMono.flatMap(post -> {
 			return integration.getUser(post.getBlogUserId());
 		});
-		return Mono
-				.zip(values-> creatPostAggregateWithUser((PostRankingDTO)values[0], (BlogUserDetails)values[1] ),
-						postRankingMono,
-						userDetail);
+		return Mono.zip(values -> creatPostAggregateWithUser((PostRankingDTO) values[0], (BlogUserDetails) values[1]),
+				postRankingMono, userDetail);
 
 	}
 

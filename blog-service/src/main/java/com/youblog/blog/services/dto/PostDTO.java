@@ -2,6 +2,9 @@ package com.youblog.blog.services.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PostDTO {
 	private Long id;
 	private String port;
@@ -9,9 +12,11 @@ public class PostDTO {
 	private String summary;
 	private String content;
 	private LocalDateTime datePosted;
+	private LocalDateTime dateUpdated;
 	private Integer blogUserId;
 
-	public PostDTO(long id, String port, String title, String summary, String content, LocalDateTime datePosted, Integer blogUserId) {
+	public PostDTO(long id, String port, String title, String summary, String content, LocalDateTime datePosted,
+			LocalDateTime dateUpdated, Integer blogUserId) {
 		this.id = id;
 		this.port = port;
 		this.title = title;
@@ -19,15 +24,12 @@ public class PostDTO {
 		this.content = content;
 		this.datePosted = datePosted;
 		this.blogUserId = blogUserId;
+		this.setDateUpdated(dateUpdated);
 	}
-	
-	
 
 	public PostDTO() {
 		super();
 	}
-
-
 
 	public Long getId() {
 		return id;
@@ -77,18 +79,20 @@ public class PostDTO {
 		this.datePosted = datePosted;
 	}
 
-
-
 	public Integer getBlogUserId() {
 		return blogUserId;
 	}
 
-
-
 	public void setBlogUserId(Integer blogUserId) {
 		this.blogUserId = blogUserId;
 	}
-	
-	
-	
+
+	public LocalDateTime getDateUpdated() {
+		return dateUpdated;
+	}
+
+	public void setDateUpdated(LocalDateTime dateUpdated) {
+		this.dateUpdated = dateUpdated;
+	}
+
 }
