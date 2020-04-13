@@ -87,8 +87,9 @@ export default ({ posts, handleLoadMore, activePage, links, onSelect }) => {
     });
   return (
     <React.Fragment>
-      {posts &&
-        posts.length > 0 && <MainListing post={posts[0]} onSelect={onSelect} />}
+      {posts && posts.length > 0 && (
+        <MainListing post={posts[0]} onSelect={onSelect} />
+      )}
 
       <InfiniteScroll
         pageStart={activePage}

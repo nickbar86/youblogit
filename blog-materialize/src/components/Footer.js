@@ -34,9 +34,7 @@ export default function StickyFooter() {
   return (
     <footer className={classes.footer}>
       <Container maxWidth="sm">
-        <Typography variant="body1">
-          
-        </Typography>
+        <Typography variant="body1"></Typography>
         <Copyright />
       </Container>
     </footer>

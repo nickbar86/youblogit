@@ -16,6 +16,9 @@ class WelcomeContainer extends Component {
   }
 }
 function mapStateToPros({ auth }) {
-  return {}
+  return {};
 }
-export default connect(mapStateToPros, null)(WelcomeContainer);
+export default connect(
+  mapStateToPros,
+  null
+)(WelcomeContainer);

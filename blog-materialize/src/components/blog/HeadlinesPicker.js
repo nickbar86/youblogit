@@ -27,7 +27,9 @@ export default class HeadlinesPicker extends Component {
         {buttons.map((
           Button,
           i // eslint-disable-next-line
-        ) => <Button key={i} {...this.props} />)}
+        ) => (
+          <Button key={i} {...this.props} />
+        ))}
       </div>
     );
   }

@@ -67,7 +67,7 @@ export default function Post(props) {
               </Typography>
               <Typography component="subtitle1" color="inherit" gutterBottom>
                 {`${new Date(post.datePosted).toLocaleString()} by ${
-                  post.user?post.user.name:"hidden"
+                  post.user ? post.user.name : "hidden"
                 }`}
               </Typography>
             </div>

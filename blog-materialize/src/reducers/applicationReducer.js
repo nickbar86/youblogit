@@ -1,5 +1,8 @@
 import * as commonActions from "./../actions/commonActions";
+import * as applicationActions from "./../actions/applicationActionTypes";
 import { initState } from "./initStates/info";
+
+import * as jwt from "jsonwebtoken";
 
 export default function info(
   state = initState,
@@ -16,7 +19,7 @@ export default function info(
         httpMessage: "Loading data..."
       };
     case commonActions.HTTP_SUCCESS_QUEUE:
-    debugger
+      debugger;
       index = state.isFetchingQueue.findIndex(que => que === params.key);
       newFetchingQueue = [
         ...state.isFetchingQueue.slice(0, index),
@@ -40,6 +43,29 @@ export default function info(
         isFetchingQueue: newFetchingQueue,
         type: "error",
         httpMessage: "Error!"
+      };
+    case applicationActions.SIGNIN:
+      const decoded = jwt.decode(payload.access_token, { complete: true });
+      debugger;
+      //cookie.save('sessionId', token, { path: '/' });
+      localStorage.setItem("token", payload.access_token);
+      return {
+        ...state,
+        authenticated: true,
+        user: {
+          mail: decoded.payload.sub,
+          authorities: [...decoded.payload.authorities]
+        }
+      };
+    case applicationActions.SIGNOUT:
+      localStorage.removeItem("token");
+      return {
+        ...state,
+        authenticated: false,
+        user: {
+          mail: null,
+          authorities: []
+        }
       };
     default:
       return { ...state };

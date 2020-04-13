@@ -48,7 +48,10 @@ class BlogListContainer extends Component {
   render() {
     return (
       <ErrorBoundary>
-        <Container style={{ marginTop: "30px", marginBottom: "100px" }} maxWidth="lg">
+        <Container
+          style={{ marginTop: "30px", marginBottom: "100px" }}
+          maxWidth="lg"
+        >
           <Blog
             posts={this.props.posts}
             handleLoadMore={this.handleLoadMore}
@@ -68,6 +71,7 @@ function mapStateToPros({ blog: { posts, links } }, { location }) {
     links
   };
 }
-export default connect(mapStateToPros, { getAllPosts, reset })(
-  BlogListContainer
-);
+export default connect(
+  mapStateToPros,
+  { getAllPosts, reset }
+)(BlogListContainer);

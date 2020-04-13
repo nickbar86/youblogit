@@ -54,9 +54,7 @@ export default function MainListing(props) {
       }
       <div className={classes.overlay} />
       <Grid container>
-        <CardActionArea
-          onClick={() => props.onSelect(post.id)}
-        >
+        <CardActionArea onClick={() => props.onSelect(post.id)}>
           <Grid item md={6}>
             <div className={classes.mainFeaturedPostContent}>
               <Typography

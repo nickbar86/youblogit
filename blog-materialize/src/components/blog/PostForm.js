@@ -93,4 +93,7 @@ function mapStateToPros() {
   return {};
 }
 
-export default connect(mapStateToPros, {})(PostForm);
+export default connect(
+  mapStateToPros,
+  {}
+)(PostForm);

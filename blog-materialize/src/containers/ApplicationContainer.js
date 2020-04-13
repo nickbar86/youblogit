@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 import * as actions from "../actions";
 import * as applicationActions from "../actions/applicationActions";
 import WelcomeContainer from "../containers/WelcomeContainer";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
 import NoMatch from "../components/NoMatch";
 import NotAllowed from "../components/NotAllowed";
@@ -16,6 +15,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BlogContainer from "./BlogContainer";
 import BlogListContainer from "./BlogListContainer";
+import HeaderContainer from "./HeaderContainer";
+import Authentication from "./../components/auth";
 //const AsyncCasesRoutes = asyncComponent(() => import("./cases"));
 const styles = theme => {
   return {
@@ -42,12 +43,13 @@ class ApplicationContainer extends Component {
         <CssBaseline />
         <BrowserRouter className={classes.main}>
           <div className={classes.root}>
-            <Header />
+            <HeaderContainer />
             <Container component="main" className={classes.main} maxWidth="lg">
               <Switch>
                 <Route exact path="/" component={WelcomeContainer} />
                 <Route exact path="/blog" component={BlogListContainer} />
                 <Route exact path="/blog/:id" component={BlogContainer} />
+                <Route path="/user" component={Authentication} />
                 <Route exact path="/forbidden" component={NotAllowed} />
                 <Route component={NoMatch} />
               </Switch>
@@ -67,8 +69,9 @@ const mapDispatchToProps = {
   ...actions,
   ...applicationActions
 };
-ApplicationContainer = connect(mapStateToProps, mapDispatchToProps)(
-  ApplicationContainer
-);
+ApplicationContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ApplicationContainer);
 
 export default withStyles(styles)(ApplicationContainer);

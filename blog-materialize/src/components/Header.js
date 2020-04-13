@@ -1,7 +1,9 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
+import { compose } from "redux";
 import { fade, withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
+import Button from "@material-ui/core/Button";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
@@ -109,6 +111,24 @@ class Header extends React.Component {
     this.setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  redirectToNewBlog = () => {
+    this.setAnchorEl(null);
+    this.handleMobileMenuClose();
+    this.props.history.push("/blog/new?edit=true");
+  };
+
+  redirectToSignOut = () => {
+    this.setAnchorEl(null);
+    this.handleMobileMenuClose();
+    this.props.history.push("/user/signout");
+  };
+
+  handleSignIn = () => {
+    this.setAnchorEl(null);
+    this.handleMobileMenuClose();
+    this.props.history.push("/user/signin");
+  };
+
   renderMenu = () => {
     return (
       <Menu
@@ -120,11 +140,10 @@ class Header extends React.Component {
         open={Boolean(this.state.anchorEl)}
         onClose={this.handleMenuClose}
       >
+        <MenuItem onClick={this.redirectToSignOut}>Sign Out</MenuItem>
         <MenuItem onClick={this.handleMenuClose}>Profile</MenuItem>
         <MenuItem onClick={this.handleMenuClose}>My account</MenuItem>
-        <Link to="/blog/new?edit=true">
-          <MenuItem onClick={this.handleMenuClose}>Add a new Blog</MenuItem>
-        </Link>
+        <MenuItem onClick={this.redirectToNewBlog}>Add a new Blog</MenuItem>
       </Menu>
     );
   };
@@ -154,6 +173,21 @@ class Header extends React.Component {
       </Menu>
     );
   };
+  renderAuthenticated = () => {
+    return (
+      <>
+        {this.renderMobileMenu()}
+        {this.renderMenu()}
+      </>
+    );
+  };
+  renderLoginRedirect = () => {
+    return (
+      <Button onClick={this.handleMenuClose} variant="outlined">
+        Sign In
+      </Button>
+    );
+  };
   render() {
     const { classes } = this.props;
     debugger;
@@ -162,7 +196,7 @@ class Header extends React.Component {
         <AppBar position="static">
           <Toolbar>
             <Typography className={classes.title} variant="h6" noWrap>
-              Nick's Blog
+              YouBlog IT
             </Typography>
             <div className={classes.search}>
               <div className={classes.searchIcon}>
@@ -178,36 +212,43 @@ class Header extends React.Component {
               />
             </div>
             <div className={classes.grow} />
-            <div className={classes.sectionDesktop}>
-              <IconButton
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={this.handleProfileMenuOpen}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-            </div>
-            <div className={classes.sectionMobile}>
-              <IconButton
-                aria-label="show more"
-                aria-controls={mobileMenuId}
-                aria-haspopup="true"
-                onClick={this.handleMobileMenuOpen}
-                color="inherit"
-              >
-                <MoreIcon />
-              </IconButton>
-            </div>
+            {this.props.authenticated ? (
+              <>
+                <div className={classes.sectionDesktop}>
+                  <IconButton
+                    edge="end"
+                    aria-label="account of current user"
+                    aria-controls={menuId}
+                    aria-haspopup="true"
+                    onClick={this.handleProfileMenuOpen}
+                    color="inherit"
+                  >
+                    <AccountCircle />
+                  </IconButton>
+                </div>
+                <div className={classes.sectionMobile}>
+                  <IconButton
+                    aria-label="show more"
+                    aria-controls={mobileMenuId}
+                    aria-haspopup="true"
+                    onClick={this.handleMobileMenuOpen}
+                    color="inherit"
+                  >
+                    <MoreIcon />
+                  </IconButton>
+                </div>
+                {this.renderAuthenticated()}
+              </>
+            ) : (
+              <Button onClick={this.handleSignIn} variant="contained">
+                Sign In
+              </Button>
+            )}
           </Toolbar>
         </AppBar>
-        {this.renderMobileMenu()}
-        {this.renderMenu()}
       </div>
     );
   }
 }
-
+Header = withRouter(Header);
 export default withStyles(styles)(Header);

@@ -56,6 +56,25 @@ export const commonApiPostObject = (url, data, action) => {
   };
 };
 
+export const commonApiPutObject = (url, data, action, authenticated) => {
+  return {
+    [CALL_API]: {
+      endpoint: url,
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      data: data,
+      authenticated: authenticated,
+      types: [
+        HTTP_REQUEST_QUEUE,
+        HTTP_SUCCESS_QUEUE,
+        HTTP_FAILURE_QUEUE,
+        action
+      ],
+      params: { key: action }
+    }
+  };
+};
+
 export const commonApiDeleteObject = (url, action) => {
   return {
     [CALL_API]: {

@@ -1,10 +1,11 @@
 import { CALL_API } from "./../middlewares/api";
 import {
-  commonApiDeleteObject,
+  //commonApiDeleteObject,
   commonApiGetObject,
-  constructParameters,
-  fetchAndReturnValue,
-  commonApiPostObject
+  //constructParameters,
+  //fetchAndReturnValue,
+  commonApiPostObject,
+  commonApiPutObject
 } from "../utils/utilities";
 import { convertToRaw } from "draft-js";
 export const FETCH_POSTS = "FETCH_POSTS";
@@ -34,16 +35,11 @@ export function getPostById(id) {
   return commonApiGetObject(`${url}/posts/${id}/`, FETCH_POST);
 }
 export function savePost(post) {
-  debugger;
   const postRaw = {
-    id: post.id,
-    title: post.title,
-    summary: post.summary,
-    datePosted: post.datePosted,
+    ...post,
     content: JSON.stringify(convertToRaw(post.content.getCurrentContent()))
   };
-  debugger;
-  return commonApiPostObject(`${url}/posts/`, postRaw, SUBMIT_POST);
+  return commonApiPutObject(`${url}/posts/`, postRaw, SUBMIT_POST, true);
 }
 
 export function initPostContentState(editorState) {
@@ -54,7 +50,6 @@ export function initPostContentState(editorState) {
 }
 
 export function updatePostContent(editorState) {
-  debugger;
   return {
     payload: editorState,
     type: UPDATE_CONTENT_STATE
@@ -62,8 +57,6 @@ export function updatePostContent(editorState) {
 }
 
 export function updatePostTitle(titleEvt) {
-  debugger;
-
   return {
     payload: titleEvt.target.value,
     type: UPDATE_TITLE_STATE
@@ -71,7 +64,6 @@ export function updatePostTitle(titleEvt) {
 }
 
 export function updatePostSummary(summaryEvt) {
-  debugger;
   return {
     payload: summaryEvt.target.value,
     type: UPDATE_SUMMARY_STATE
