@@ -6,9 +6,9 @@ public class PostRankingDTO extends PostDTO {
 	private Float ranking;
 	private BlogUserDetails user;
 
-	public PostRankingDTO(long id, String port, String title, String summary, String content, LocalDateTime datePosted,
+	public PostRankingDTO(long id, String port, String title, String summary, String content, LocalDateTime datePosted, LocalDateTime dateUpdated,
 			Integer userId, Float ranking) {
-		super(id, port, title, summary, content, datePosted, userId);
+		super(id, port, title, summary, content, datePosted, datePosted, userId);
 		this.setRanking(ranking);
 	}
 

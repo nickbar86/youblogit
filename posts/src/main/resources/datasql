@@ -1,7 +1,7 @@
-insert into post(id,title,summary,content,date_posted,date_updated,blog_user_id,version)  
-values(2,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),now(),2,0);
-insert into post(id,title,summary,content,date_posted,editor_name,version)  
-values(3,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),now(),2,0);
+	insert into post(id,title,summary,content,date_posted,date_updated,blog_user_id,version)  
+	values(2,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),now(),2,0);
+	insert into post(id,title,summary,content,date_posted,editor_name,version)  
+	values(3,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),now(),2,0);
 insert into post(id,title,summary,content,date_posted,editor_name,version)  
 values(4,'Test Title 2', 'This is our summary!!' ,'{"blocks":[{"key":"bcr7f","text":"fgdfgdf","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',now(),now(),2,0);
 insert into post(id,title,summary,content,date_posted,editor_name,version)  

@@ -1,8 +1,12 @@
 package com.youblog.blog.services.dto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class BlogUserDTO {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class BlogUserDTO implements Serializable {
 	private Integer id;
 	private String email;
 	private String name;

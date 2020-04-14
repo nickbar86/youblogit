@@ -30,6 +30,7 @@ public class SecurityConfig {
 				.pathMatchers("/oauth/**").permitAll()
 				.pathMatchers("/config/**").permitAll()
 				.pathMatchers(HttpMethod.GET,"/blog-post/**").permitAll()
+				.pathMatchers(HttpMethod.PUT,"/blog-post/users").permitAll()
 				.anyExchange().authenticated()
 				.and()
 			.oauth2ResourceServer()

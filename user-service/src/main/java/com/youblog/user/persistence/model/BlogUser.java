@@ -14,8 +14,11 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "blog_user")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BlogUser {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

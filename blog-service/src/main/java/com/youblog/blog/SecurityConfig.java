@@ -13,12 +13,16 @@ public class SecurityConfig {
 
 	@Bean
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-		http
+		http.csrf().disable()
 			.authorizeExchange()
 				.pathMatchers("/actuator/**").permitAll()
-				.pathMatchers(POST, "/blog-post/**").hasAuthority("SCOPE_blogpost:write")
-				.pathMatchers(DELETE, "/blog-post/**").hasAuthority("SCOPE_blogpost:write")
-				.pathMatchers(GET, "/blog-post/**").permitAll()
+				.pathMatchers(GET, "/blog-post").permitAll()
+				.pathMatchers(GET, "/blog-post/posts/**").permitAll()
+				.pathMatchers(GET, "/blog-post/reviews/**").permitAll()
+				.pathMatchers(PUT, "/blog-post/users").permitAll()
+				//.pathMatchers(POST, "/blog-post/**").hasAuthority("SCOPE_blogpost:write")
+				//.pathMatchers(DELETE, "/blog-post/**").hasAuthority("SCOPE_blogpost:write")
+				//.pathMatchers(PUT, "/blog-post/**").hasAuthority("SCOPE_blogpost:write")
 				.anyExchange().authenticated()
 				.and()
 			.oauth2ResourceServer()

@@ -89,12 +89,14 @@ public class BlogController implements IBlog {
 			if (rankings.keySet().contains(postId)) {
 				Float ranking = rankings.get(postId);
 				PostRankingDTO complete = new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(),
-						post.getSummary(), post.getContent(), post.getDatePosted(), post.getBlogUserId(), ranking);
+						post.getSummary(), post.getContent(), post.getDatePosted(), post.getDateUpdated(),
+						post.getBlogUserId(), ranking);
 				// complete.setUser(userDetail);
 				sink.next(complete);
 			} else {
 				PostRankingDTO complete = new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(),
-						post.getSummary(), post.getContent(), post.getDatePosted(), post.getBlogUserId(), null);
+						post.getSummary(), post.getContent(), post.getDatePosted(), post.getDateUpdated(),
+						post.getBlogUserId(), null);
 				sink.next(complete);
 			}
 		});
@@ -139,7 +141,8 @@ public class BlogController implements IBlog {
 
 	private PostDTO getPostFallbackValue(int postId) {
 		LOG.warn("Creating a fallback post for postId = {}", postId);
-		return new PostDTO(postId, serviceUtil.getServicePort(), "No Results", "This is a fallback", null, null, null);
+		return new PostDTO(postId, serviceUtil.getServicePort(), "No Results", "This is a fallback", null, null, null,
+				null);
 	}
 
 	private PostRanking getRankingFallbackValue() {
@@ -150,7 +153,7 @@ public class BlogController implements IBlog {
 	private PostRankingDTO createPostAggregate(SecurityContext sc, PostDTO post, PostRanking avgRanking) {
 		logAuthorizationInfo(sc);
 		return new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(), post.getSummary(), post.getContent(),
-				post.getDatePosted(), post.getBlogUserId(), avgRanking.getAvgRanking());
+				post.getDatePosted(), post.getDateUpdated(), post.getBlogUserId(), avgRanking.getAvgRanking());
 	}
 
 	@Override
@@ -355,7 +358,7 @@ public class BlogController implements IBlog {
 
 	@Override
 	public Mono<BlogUserInfoDTO> updateExistingUser(BlogUserDTO body) {
-		return integration.updateExistingUser(body)
+		return integration.saveUser(body)
 				.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
 				.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue(body));
 	}
@@ -369,5 +372,15 @@ public class BlogController implements IBlog {
 	@Override
 	public Flux<BlogUserInfoDTO> fetchUsers() {
 		return integration.getUsers();
+	}
+
+	@Override
+	public Mono<BlogUserInfoDTO> fetchSignedInUser() {
+		return ReactiveSecurityContextHolder.getContext()
+        .map(SecurityContext::getAuthentication)
+        .flatMap(auth->integration.getUserByEmail(auth.getName()))
+		.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
+		.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue(null));
+	
 	}
 }

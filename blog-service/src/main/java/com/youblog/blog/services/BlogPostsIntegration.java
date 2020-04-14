@@ -237,9 +237,11 @@ public class BlogPostsIntegration {
 
 	@CircuitBreaker(name = "user-service")
 	public Mono<BlogUserInfoDTO> createNewUser(BlogUserDTO body) {
-		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/users/").build();
+		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/blogUsers").build();
 		LOG.debug("Will call the create User API on URL: {}", url);
-		return getAuthenticatedClient().put().uri(url.getPath()).contentType(MediaType.APPLICATION_JSON).bodyValue(body)
+		body.setRole("USER");
+		body.setEnabled(true);
+		return getAuthenticatedClient().post().uri(url.toUri()).contentType(MediaType.APPLICATION_JSON).bodyValue(body)
 				.retrieve().bodyToMono(BlogUserInfoDTO.class).log()
 				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
 				.timeout(Duration.ofSeconds(userServiceTimeoutSec));
@@ -247,33 +249,15 @@ public class BlogPostsIntegration {
 
 	@Retry(name = "user-service")
 	@CircuitBreaker(name = "user-service")
-	public Mono<BlogUserInfoDTO> updateExistingUser(BlogUserDTO body) {
-		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/users/").build();
-		LOG.debug("Will call the update User API on URL: {}", url);
-		return getAuthenticatedClient().post().uri(url.getPath()).contentType(MediaType.APPLICATION_JSON)
+	public Mono<BlogUserInfoDTO> saveUser(BlogUserDTO body) {
+		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/blogUsers").build();
+		LOG.debug("Will call the update User API on URL: {}", url.toUri());
+		return getAuthenticatedClient().post().uri(url.toUri()).contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(body).retrieve().bodyToMono(BlogUserInfoDTO.class).log()
 				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}
-
-	@CircuitBreaker(name = "user-service")
-	public Flux<BlogUserInfoDTO> getUsers() {
-		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/users/").build();
-		LOG.debug("Will call the create User API on URL: {}", url);
-		return getAuthenticatedClient().get().uri(url.getPath()).retrieve().bodyToFlux(BlogUserInfoDTO.class).log()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
-				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
-	}
-
-	@CircuitBreaker(name = "user-service")
-	public Mono<Void> deleteUser(int userId) {
-		URI url = UriComponentsBuilder.fromUriString(userServiceUrl + "/users/{userId}").build(userId);
-		LOG.debug("Will call the delete User API on URL: {}", url);
-		return getAuthenticatedClient().delete().uri(url.getPath()).exchange()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
-				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec)).then();
-	}
-
+	
 	@Retry(name = "user-service")
 	@CircuitBreaker(name = "user-service")
 	public Mono<BlogUserDetails> getUser(Integer userId) {
@@ -283,4 +267,35 @@ public class BlogPostsIntegration {
 				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}
+
+	@CircuitBreaker(name = "user-service")
+	public Flux<BlogUserInfoDTO> getUsers() {
+		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/blogUsers").build();
+		LOG.debug("Will call the create User API on URL: {}", url);
+		return getAuthenticatedClient().get().uri(url.toUri()).retrieve().bodyToFlux(BlogUserInfoDTO.class).log()
+				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
+	}
+
+	@CircuitBreaker(name = "user-service")
+	public Mono<Void> deleteUser(int userId) {
+		URI url = UriComponentsBuilder.fromUriString(userServiceUrl + "/blogUsers/{userId}").build(userId);
+		LOG.debug("Will call the delete User API on URL: {}", url);
+		return getAuthenticatedClient().delete().uri(url.getPath()).exchange()
+				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec)).then();
+	}
+
+	@Retry(name = "user-service")
+	@CircuitBreaker(name = "user-service")
+	public Mono<BlogUserInfoDTO> getUserByEmail(String email) {
+		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/blogUsers/search/findByEmailIgnoreCase")
+				.queryParam("email", email).build();
+		LOG.debug("Will call the getUserDetails by email API on URL: {}", url.toUri());
+		return getAuthenticatedClient().get().uri(url.toUri()).retrieve().bodyToMono(BlogUserInfoDTO.class).log()
+				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
+	}
+
+
 }
