@@ -6,7 +6,7 @@ import {
 } from "./commonActions";
 import * as actions from "./applicationActionTypes";
 const authUrl = "/oauth/token";
-
+const usrURL = "/blog-post/users";
 export function signIn(username, password, callback) {
   const loginByPassBody = new URLSearchParams();
   loginByPassBody.append("grant_type", "password");
@@ -26,6 +26,49 @@ export function signIn(username, password, callback) {
         actions.SIGNIN
       ],
       params: { key: actions.SIGNIN, authenticate: true, callback }
+    }
+  };
+}
+
+export function signUp(username, email, password, callback) {
+  const data = {
+    name: username,
+    email: email,
+    password: password
+  }
+  return {
+    [CALL_API]: {
+      endpoint: `${usrURL}`,
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      data: data,
+      authenticated: false,
+      types: [
+        HTTP_REQUEST_QUEUE,
+        HTTP_SUCCESS_QUEUE,
+        HTTP_FAILURE_QUEUE,
+        actions.SIGNUP
+      ],
+      params: { key: actions.SIGNUP, authenticate: false, callback }
+    }
+  };
+}
+
+export function fetchUserProfile() {
+
+  return {
+    [CALL_API]: {
+      endpoint: `${usrURL}/profile`,
+      method: "GET",
+      headers: { "Content-Type": "text/html; charset=UTF-8" },
+      authenticated: true,
+      types: [
+        HTTP_REQUEST_QUEUE,
+        HTTP_SUCCESS_QUEUE,
+        HTTP_FAILURE_QUEUE,
+        actions.USER_DETAILS
+      ],
+      params: { key: actions.SIGNUP, authenticate: false }
     }
   };
 }

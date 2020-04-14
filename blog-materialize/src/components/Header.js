@@ -123,6 +123,12 @@ class Header extends React.Component {
     this.props.history.push("/user/signout");
   };
 
+  redirectToProfile = () => {
+    this.setAnchorEl(null);
+    this.handleMobileMenuClose();
+    this.props.history.push("/user/profile");
+  };
+
   handleSignIn = () => {
     this.setAnchorEl(null);
     this.handleMobileMenuClose();
@@ -141,8 +147,8 @@ class Header extends React.Component {
         onClose={this.handleMenuClose}
       >
         <MenuItem onClick={this.redirectToSignOut}>Sign Out</MenuItem>
-        <MenuItem onClick={this.handleMenuClose}>Profile</MenuItem>
-        <MenuItem onClick={this.handleMenuClose}>My account</MenuItem>
+        <MenuItem onClick={this.redirectToProfile}>My Profile</MenuItem>
+        <MenuItem onClick={this.handleMenuClose}>My Blogs</MenuItem>
         <MenuItem onClick={this.redirectToNewBlog}>Add a new Blog</MenuItem>
       </Menu>
     );

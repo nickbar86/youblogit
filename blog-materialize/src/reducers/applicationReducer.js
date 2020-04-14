@@ -67,6 +67,15 @@ export default function info(
           authorities: []
         }
       };
+    case applicationActions.SIGNUP:
+      return {
+        ...state
+      };
+    case applicationActions.USER_DETAILS:
+      return {
+        ...state,
+        userProfile: payload
+      };
     default:
       return { ...state };
   }

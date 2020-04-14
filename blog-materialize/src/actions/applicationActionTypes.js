@@ -4,3 +4,6 @@ export const CONNECTED = "CONNECTED";
 export const DISCONNECTED = "DISCONNECTED";
 export const SIGNIN = "SIGNIN";
 export const SIGNOUT = "SIGNOUT";
+export const SIGNUP = "SIGNUP";
+export const UPDATE_DETAILS = "UPDATE_DETAILS";
+export const USER_DETAILS = "USER_DETAILS";

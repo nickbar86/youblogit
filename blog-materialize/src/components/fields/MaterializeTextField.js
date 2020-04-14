@@ -11,16 +11,18 @@ export default ({
   required,
   meta: { error, touched, warning }
 }) => {
+  debugger
   return (
     <TextField
       {...input}
+      error={error}
+      helperText={error}
       variant="outlined"
       margin="normal"
       required={required}
       fullWidth
       id={id}
       label={label}
-      name={name}
       autoComplete={autoComplete}
       autoFocus
       type={type}

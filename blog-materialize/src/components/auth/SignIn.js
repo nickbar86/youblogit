@@ -6,7 +6,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -17,18 +16,7 @@ import { withStyles, createStyles } from "@material-ui/core/styles";
 import { signIn } from "./../../actions/applicationActions";
 import { connect } from "react-redux";
 import { compose } from "redux";
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://material-ui.com/">
-        YouBlog IT
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+
 
 const styles = theme => {
   return {
@@ -53,12 +41,12 @@ const styles = theme => {
 };
 
 class SignIn extends React.Component {
+
   onSubmit = formProps => {
     this.props.signIn(formProps.email, formProps.password, () => {
       this.props.history.push("/blog");
     });
   };
-  debugger;
 
   render() {
     debugger;
@@ -75,7 +63,6 @@ class SignIn extends React.Component {
           </Typography>
           <form
             className={classes.form}
-            noValidate
             onSubmit={handleSubmit(this.onSubmit)}
           >
             <Field
@@ -94,10 +81,6 @@ class SignIn extends React.Component {
               autoComplete="current-password"
               type="password"
               required
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
             />
             <Button
               type="submit"
@@ -122,9 +105,6 @@ class SignIn extends React.Component {
             </Grid>
           </form>
         </div>
-        <Box mt={8}>
-          <Copyright />
-        </Box>
       </Container>
     );
   }

@@ -8,7 +8,8 @@ export const initState = {
   user: {
     mail: decoded ? decoded.payload.sub : null,
     authorities: decoded ? [...decoded.payload.authorities] : []
-  }
+  },
+  userProfile: {}
 };
 
 export const resetState = {};

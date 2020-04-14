@@ -19,7 +19,7 @@ export const RESET = "RESET";
 const url = "blog-post";
 
 export function getAllPosts(page, size, sort) {
-  const requestUrl = `${url}/${
+  const requestUrl = `${url}${
     sort ? `?page=${page}&size=${size}&sort=${sort}` : ""
   }`;
   return commonApiGetObject(`${requestUrl}`, FETCH_POSTS);
@@ -32,14 +32,14 @@ export function reset() {
 }
 
 export function getPostById(id) {
-  return commonApiGetObject(`${url}/posts/${id}/`, FETCH_POST);
+  return commonApiGetObject(`${url}/posts/${id}`, FETCH_POST);
 }
 export function savePost(post) {
   const postRaw = {
     ...post,
     content: JSON.stringify(convertToRaw(post.content.getCurrentContent()))
   };
-  return commonApiPutObject(`${url}/posts/`, postRaw, SUBMIT_POST, true);
+  return commonApiPutObject(`${url}/posts`, postRaw, SUBMIT_POST, true);
 }
 
 export function initPostContentState(editorState) {

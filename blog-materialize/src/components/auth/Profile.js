@@ -7,24 +7,12 @@ import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { reduxForm, Field } from "redux-form";
+import { reduxForm, Field, formValueSelector } from "redux-form";
 import MaterializeTextField from "./../fields/MaterializeTextField";
 import { withStyles } from "@material-ui/core/styles";
-import { signUp } from "./../../actions/applicationActions";
-import { connect } from "react-redux";
 import { compose } from "redux";
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://material-ui.com/">
-        YouBlog IT
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import { connect } from "react-redux";
+import { DateTimePicker } from "@material-ui/pickers";
 
 const styles = theme => {
   return {
@@ -34,7 +22,11 @@ const styles = theme => {
       flexDirection: "column",
       alignItems: "center"
     },
-    avatar: {
+    avatarUnlocked: {
+      margin: theme.spacing(1),
+      backgroundColor: theme.palette.primary.main
+    },
+    avatarLocked: {
       margin: theme.spacing(1),
       backgroundColor: theme.palette.secondary.main
     },
@@ -48,34 +40,54 @@ const styles = theme => {
   };
 };
 
-class SignUp extends React.Component {
+class Profile extends React.Component {
   onSubmit = formProps => {
-    this.props.signUp(
+    /*this.props.signUp(
       formProps.name,
       formProps.email,
       formProps.password,
       () => {
         this.props.history.push("/user/signin");
       }
-    );
+    );*/
   };
-  debugger;
 
   render() {
-    debugger;
-    const { classes, handleSubmit, submitting } = this.props;
+    const {
+      classes,
+      handleSubmit,
+      submitting,
+      formValues
+    } = this.props;
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
+          <Avatar className={formValues.enabled?classes.avatarUnlocked:classes.avatarLocked}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            {`Hello ${formValues.name}`}
           </Typography>
           <form className={classes.form} onSubmit={handleSubmit(this.onSubmit)}>
             <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <DateTimePicker
+                  variant="inline"
+                  label="Date Created"
+                  value={formValues.created}
+                  disabled
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <DateTimePicker
+                  variant="inline"
+                  label="Date Updated"
+                  value={formValues.modified}
+                  disabled
+                />
+              </Grid>
+
               <Grid item xs={12}>
                 <Field
                   name="name"
@@ -102,7 +114,7 @@ class SignUp extends React.Component {
                   id="password"
                   label="Password"
                   component={MaterializeTextField}
-                  autoComplete="current-password"
+                  //autoComplete="current-password"
                   type="password"
                   required
                 />
@@ -113,7 +125,7 @@ class SignUp extends React.Component {
                   id="password2"
                   label="Retype Password"
                   component={MaterializeTextField}
-                  autoComplete="current-password"
+                  //autoComplete="current-password"
                   type="password"
                   required
                 />
@@ -127,15 +139,9 @@ class SignUp extends React.Component {
               disabled={submitting}
               className={classes.submit}
             >
-              Sign Up
+              Update
             </Button>
-            <Grid container justify="flex-end">
-              <Grid item>
-                <Link href="/user/signin" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Grid>
+
           </form>
         </div>
       </Container>
@@ -143,19 +149,34 @@ class SignUp extends React.Component {
   }
 }
 function validate({ password, password2 }) {
-
   const errors = {};
-  if(password!==password2){
-    errors.password="Passwords do not match"
-    errors.password2="Passwords do not match"
+  if (password !== password2) {
+    errors.password = "Passwords do not match";
+    errors.password2 = "Passwords do not match";
   }
   return errors;
 }
-SignUp = compose(
+const selector = formValueSelector("profile");
+function mapStateToProps(state, props) {
+  return {
+    initialValues: props.userProfile,
+    enableReinitialize: true,
+    formValues: selector(
+      state,
+      "name",
+      "role",
+      "enabled",
+      "created",
+      "modified"
+    )
+  };
+}
+
+Profile = compose(
   connect(
-    null,
-    { signUp }
+    mapStateToProps,
+    null
   ),
-  reduxForm({ form: "signup", validate })
-)(SignUp);
-export default withStyles(styles)(SignUp);
+  reduxForm({ form: "profile", validate })
+)(Profile);
+export default withStyles(styles)(Profile);
