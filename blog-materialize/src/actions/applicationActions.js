@@ -7,6 +7,7 @@ import {
 import * as actions from "./applicationActionTypes";
 const authUrl = "/oauth/token";
 const usrURL = "/blog-post/users";
+
 export function signIn(username, password, callback) {
   const loginByPassBody = new URLSearchParams();
   loginByPassBody.append("grant_type", "password");
@@ -35,7 +36,7 @@ export function signUp(username, email, password, callback) {
     name: username,
     email: email,
     password: password
-  }
+  };
   return {
     [CALL_API]: {
       endpoint: `${usrURL}`,
@@ -55,7 +56,6 @@ export function signUp(username, email, password, callback) {
 }
 
 export function fetchUserProfile() {
-
   return {
     [CALL_API]: {
       endpoint: `${usrURL}/profile`,
@@ -68,7 +68,31 @@ export function fetchUserProfile() {
         HTTP_FAILURE_QUEUE,
         actions.USER_DETAILS
       ],
-      params: { key: actions.SIGNUP, authenticate: false }
+      params: { key: actions.USER_DETAILS, authenticate: false }
+    }
+  };
+}
+
+export function updateUserProfile(username, email, password) {
+  const data = {
+    name: username,
+    email: email,
+    password: password
+  };
+  return {
+    [CALL_API]: {
+      endpoint: `${usrURL}`,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      authenticated: true,
+      data: data,
+      types: [
+        HTTP_REQUEST_QUEUE,
+        HTTP_SUCCESS_QUEUE,
+        HTTP_FAILURE_QUEUE,
+        actions.UPDATE_DETAILS
+      ],
+      params: { key: actions.UPDATE_DETAILS, authenticate: false }
     }
   };
 }

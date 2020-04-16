@@ -10,7 +10,6 @@ import WelcomeContainer from "../containers/WelcomeContainer";
 import Footer from "../components/Footer";
 import NoMatch from "../components/NoMatch";
 import NotAllowed from "../components/NotAllowed";
-import PrivateRoute from "./../components/PrivateRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BlogContainer from "./BlogContainer";

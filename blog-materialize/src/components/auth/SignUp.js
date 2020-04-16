@@ -8,23 +8,11 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { reduxForm, Field } from "redux-form";
-import MaterializeTextField from "./../fields/MaterializeTextField";
+import MaterializeTextField from "./../fields/materializeTextField";
 import { withStyles } from "@material-ui/core/styles";
 import { signUp } from "./../../actions/applicationActions";
 import { connect } from "react-redux";
 import { compose } from "redux";
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://material-ui.com/">
-        YouBlog IT
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 const styles = theme => {
   return {
@@ -59,10 +47,8 @@ class SignUp extends React.Component {
       }
     );
   };
-  debugger;
 
   render() {
-    debugger;
     const { classes, handleSubmit, submitting } = this.props;
     return (
       <Container component="main" maxWidth="xs">
@@ -143,11 +129,10 @@ class SignUp extends React.Component {
   }
 }
 function validate({ password, password2 }) {
-
   const errors = {};
-  if(password!==password2){
-    errors.password="Passwords do not match"
-    errors.password2="Passwords do not match"
+  if (password !== password2) {
+    errors.password = "Passwords do not match";
+    errors.password2 = "Passwords do not match";
   }
   return errors;
 }

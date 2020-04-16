@@ -5,6 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
+import Ranking from "./ranking";
 
 const useStyles = makeStyles(theme => ({
   mainFeaturedPost: {
@@ -65,10 +66,13 @@ export default function Post(props) {
               >
                 {post.title}
               </Typography>
-              <Typography component="subtitle1" color="inherit" gutterBottom>
+              <Typography color="inherit" gutterBottom>
                 {`${new Date(post.datePosted).toLocaleString()} by ${
                   post.user ? post.user.name : "hidden"
                 }`}
+              </Typography>
+              <Typography color="inherit" gutterBottom>
+                <Ranking rank={post.ranking} onSelect={() => {}} />
               </Typography>
             </div>
           </Grid>
@@ -77,11 +81,11 @@ export default function Post(props) {
       <Typography variant="body1" color="inherit" paragraph>
         <i>{post.summary}</i>
       </Typography>
-      <Typography variant="body2" color="inherit" paragraph>
+      <>
         {post.content && (
           <Editor toolbarHidden editorState={post.content} readOnly={true} />
         )}
-      </Typography>
+      </>
     </>
   );
 }

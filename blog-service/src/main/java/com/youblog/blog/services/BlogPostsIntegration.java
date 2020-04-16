@@ -95,10 +95,10 @@ public class BlogPostsIntegration {
 		this.systemAuthPassword = systemAuthPassword;
 	}
 
-	public PostDTO createPost(PostDTO body) {
+	public Mono<Void> createPost(PostDTO body) {
 		messageSources.outputPosts()
 				.send(MessageBuilder.withPayload(new Event(Type.CREATE, body.getTitle(), body)).build());
-		return body;
+		return Mono.empty();
 	}
 
 	@Retry(name = "post-service")
@@ -252,12 +252,12 @@ public class BlogPostsIntegration {
 	public Mono<BlogUserInfoDTO> saveUser(BlogUserDTO body) {
 		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/blogUsers").build();
 		LOG.debug("Will call the update User API on URL: {}", url.toUri());
-		return getAuthenticatedClient().post().uri(url.toUri()).contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(body).retrieve().bodyToMono(BlogUserInfoDTO.class).log()
+		return getAuthenticatedClient().post().uri(url.toUri()).contentType(MediaType.APPLICATION_JSON).bodyValue(body)
+				.retrieve().bodyToMono(BlogUserInfoDTO.class).log()
 				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}
-	
+
 	@Retry(name = "user-service")
 	@CircuitBreaker(name = "user-service")
 	public Mono<BlogUserDetails> getUser(Integer userId) {
@@ -289,13 +289,27 @@ public class BlogPostsIntegration {
 	@Retry(name = "user-service")
 	@CircuitBreaker(name = "user-service")
 	public Mono<BlogUserInfoDTO> getUserByEmail(String email) {
-		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/blogUsers/search/findByEmailIgnoreCase")
-				.queryParam("email", email).build();
+		UriComponents url = UriComponentsBuilder
+				.fromUriString(userServiceUrl + "/blogUsers/search/findByEmailIgnoreCase").queryParam("email", email)
+				.build();
 		LOG.debug("Will call the getUserDetails by email API on URL: {}", url.toUri());
 		return getAuthenticatedClient().get().uri(url.toUri()).retrieve().bodyToMono(BlogUserInfoDTO.class).log()
 				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}
 
+	public Mono<ClientResponse> getPostsByUserId(Long id, int pageIndex, int pageSize, String sort, Direction direction) {
+		UriComponents url = UriComponentsBuilder
+				.fromUriString(postServiceUrl + "/posts/")
+				.queryParam("blogUserId", id)
+				.queryParam("page", pageIndex)
+				.queryParam("size", pageSize)
+				.queryParam("sort", sort)
+				.queryParam("direction", direction).build();
+		LOG.debug("Will call the getPost API on URL: {}", url);
+		return getWebClient().get().uri(url.toUri()).exchange().log()
+				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.timeout(Duration.ofSeconds(postServiceTimeoutSec));
+	}
 
 }

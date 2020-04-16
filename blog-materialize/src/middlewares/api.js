@@ -12,7 +12,6 @@ function callApi(endpoint, method, headers, data, params, authenticated) {
     // throw "No token saved!"
   }
 
-  debugger;
   if (params["authenticate"]) {
     //TODO this must come from env var
     const token = Buffer.from("writer:secret", "utf8").toString("base64");
@@ -94,7 +93,6 @@ export default store => next => action => {
     },
     error => {
       console.log(error);
-      debugger;
       toast.error(
         `Error Notification !: ${
           error.message ? error.message : "There was an error"

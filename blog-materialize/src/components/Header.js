@@ -1,6 +1,5 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { compose } from "redux";
 import { fade, withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
@@ -13,7 +12,7 @@ import Menu from "@material-ui/core/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const styles = theme => {
   return {
@@ -25,6 +24,7 @@ const styles = theme => {
     },
     title: {
       display: "none",
+      cursor: "pointer",
       [theme.breakpoints.up("sm")]: {
         display: "block"
       }
@@ -111,28 +111,34 @@ class Header extends React.Component {
     this.setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  redirectToNewBlog = () => {
+  handleRedirectToNewBlog = () => {
     this.setAnchorEl(null);
     this.handleMobileMenuClose();
-    this.props.history.push("/blog/new?edit=true");
+    //this.props.history.push("/blog/new?edit=true");
   };
 
-  redirectToSignOut = () => {
+  handleRedirectToSignOut = () => {
     this.setAnchorEl(null);
     this.handleMobileMenuClose();
-    this.props.history.push("/user/signout");
+    //this.props.history.push("/user/signout");
   };
 
-  redirectToProfile = () => {
+  handleRedirectToProfile = () => {
     this.setAnchorEl(null);
     this.handleMobileMenuClose();
-    this.props.history.push("/user/profile");
+    //this.props.history.push("/user/profile");
   };
 
   handleSignIn = () => {
     this.setAnchorEl(null);
     this.handleMobileMenuClose();
     this.props.history.push("/user/signin");
+  };
+
+  handleRedirectToBlog = () => {
+    this.setAnchorEl(null);
+    this.handleMobileMenuClose();
+    this.props.history.push("/blog");
   };
 
   renderMenu = () => {
@@ -146,10 +152,49 @@ class Header extends React.Component {
         open={Boolean(this.state.anchorEl)}
         onClose={this.handleMenuClose}
       >
-        <MenuItem onClick={this.redirectToSignOut}>Sign Out</MenuItem>
-        <MenuItem onClick={this.redirectToProfile}>My Profile</MenuItem>
-        <MenuItem onClick={this.handleMenuClose}>My Blogs</MenuItem>
-        <MenuItem onClick={this.redirectToNewBlog}>Add a new Blog</MenuItem>
+        <MenuItem
+          component={NavLink}
+          to="/user/signout"
+          onClick={this.handleRedirectToSignOut}
+        >
+          Sign Out
+        </MenuItem>
+        <MenuItem
+          component={NavLink}
+          to="/user/profile"
+          exact={true}
+          onClick={this.handleRedirectToProfile}
+          activeStyle={{
+            backgroundColor: "rgba(63, 80, 182, 0.25)",
+            borderColor: "#778088"
+          }}
+        >
+          My Profile
+        </MenuItem>
+        <MenuItem
+          component={NavLink}
+          to="/user/blog"
+          exact={true}
+          onClick={this.handleMenuClose}
+          activeStyle={{
+            backgroundColor: "rgba(63, 80, 182, 0.25)",
+            borderColor: "#778088"
+          }}
+        >
+          My Blogs
+        </MenuItem>
+        <MenuItem
+          component={NavLink}
+          to="/user/blog/new?edit=true"
+          exact={true}
+          onClick={this.handleRedirectToNewBlog}
+          activeStyle={{
+            backgroundColor: "rgba(63, 80, 182, 0.25)",
+            borderColor: "#778088"
+          }}
+        >
+          Add a new Blog
+        </MenuItem>
       </Menu>
     );
   };
@@ -196,12 +241,16 @@ class Header extends React.Component {
   };
   render() {
     const { classes } = this.props;
-    debugger;
     return (
       <div>
         <AppBar position="static">
           <Toolbar>
-            <Typography className={classes.title} variant="h6" noWrap>
+            <Typography
+              className={classes.title}
+              variant="h6"
+              noWrap
+              onClick={this.handleRedirectToBlog}
+            >
               YouBlog IT
             </Typography>
             <div className={classes.search}>

@@ -21,12 +21,13 @@ export const constructParameters = (array1, array2) => {
     .join("&");
 };
 
-export const commonApiGetObject = (url, action) => {
+export const commonApiGetObject = (url, action, authenticated) => {
   return {
     [CALL_API]: {
       endpoint: url,
       method: "GET",
       headers: { "Content-Type": "application/json" },
+      authenticated: authenticated,
       types: [
         HTTP_REQUEST_QUEUE,
         HTTP_SUCCESS_QUEUE,
@@ -38,13 +39,14 @@ export const commonApiGetObject = (url, action) => {
   };
 };
 
-export const commonApiPostObject = (url, data, action) => {
+export const commonApiPostObject = (url, data, action, authenticated) => {
   return {
     [CALL_API]: {
       endpoint: url,
       method: "POST",
       headers: { "Content-Type": "application/json" },
       data: data,
+      authenticated: authenticated,
       types: [
         HTTP_REQUEST_QUEUE,
         HTTP_SUCCESS_QUEUE,
@@ -80,7 +82,7 @@ export const commonApiDeleteObject = (url, action) => {
     [CALL_API]: {
       endpoint: url,
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       types: [
         HTTP_REQUEST_QUEUE,
         HTTP_SUCCESS_QUEUE,

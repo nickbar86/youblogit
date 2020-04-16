@@ -9,6 +9,9 @@ export default ({
   autoComplete,
   id,
   required,
+  rows,
+  rowsMax,
+  placeholder,
   meta: { error, touched, warning }
 }) => {
   return (
@@ -16,16 +19,17 @@ export default ({
       {...input}
       error={error}
       helperText={error}
-      variant="outlined"
-      margin="normal"
       required={required}
       fullWidth
-      id={id}
+      id="standard-multiline-flexible"
       label={label}
       autoComplete={autoComplete}
       autoFocus
-      type={type}
       value={input.value}
+      rows={rows}
+      rowsMax={rowsMax}
+      placeholder={placeholder}
+      multiline
     />
   );
 };

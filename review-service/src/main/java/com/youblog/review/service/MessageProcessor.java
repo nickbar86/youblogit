@@ -1,5 +1,7 @@
 package com.youblog.review.service;
 
+import java.time.LocalDateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ public class MessageProcessor {
 
 		case CREATE:
 			ReviewDTO review = event.getData();
+			review.setDatePosted(LocalDateTime.now());
 			LOG.info("Creating a new review");
 			reviewService.saveReview(review);
 			break;

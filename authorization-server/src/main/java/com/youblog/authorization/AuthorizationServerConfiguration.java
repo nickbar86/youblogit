@@ -205,7 +205,7 @@ class IntrospectEndpoint {
 		attributes.put("exp", accessToken.getExpiration().getTime());
 		attributes.put("scope", accessToken.getScope().stream().collect(Collectors.joining(" ")));
 		attributes.put("sub", authentication.getName());
-
+		
 		return attributes;
 	}
 }
@@ -274,6 +274,7 @@ class SubjectAttributeUserTokenConverter extends DefaultUserAuthenticationConver
 	public Map<String, ?> convertUserAuthentication(Authentication authentication) {
 		Map<String, Object> response = new LinkedHashMap<String, Object>();
 		response.put("sub", authentication.getName());
+		response.put("userid", ((CustomUser)authentication.getPrincipal()).getBlogUserId());
 		if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
 			response.put(AUTHORITIES, AuthorityUtils.authorityListToSet(authentication.getAuthorities()));
 		}

@@ -19,7 +19,6 @@ export default function info(
         httpMessage: "Loading data..."
       };
     case commonActions.HTTP_SUCCESS_QUEUE:
-      debugger;
       index = state.isFetchingQueue.findIndex(que => que === params.key);
       newFetchingQueue = [
         ...state.isFetchingQueue.slice(0, index),
@@ -46,7 +45,6 @@ export default function info(
       };
     case applicationActions.SIGNIN:
       const decoded = jwt.decode(payload.access_token, { complete: true });
-      debugger;
       //cookie.save('sessionId', token, { path: '/' });
       localStorage.setItem("token", payload.access_token);
       return {
@@ -54,6 +52,7 @@ export default function info(
         authenticated: true,
         user: {
           mail: decoded.payload.sub,
+          userid: decoded.payload.userid,
           authorities: [...decoded.payload.authorities]
         }
       };
@@ -64,6 +63,7 @@ export default function info(
         authenticated: false,
         user: {
           mail: null,
+          userid: null,
           authorities: []
         }
       };

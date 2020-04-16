@@ -27,6 +27,7 @@ public interface IBlog {
 
 	@GetMapping(value = "/blog-post", produces = "application/json")
 	public Mono<ResponseEntity> getPosts(
+			@RequestParam(name = "userPosts", required = false, defaultValue = "false") boolean userPosts,
 			@RequestParam(name = "page", required = false, defaultValue = "0") int pageIndex,
 			@RequestParam(name = "size", required = true, defaultValue = "10") int pageSize,
 			@RequestParam(name = "sort", required = true, defaultValue = "id") String sort,

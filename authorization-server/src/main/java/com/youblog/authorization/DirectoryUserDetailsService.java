@@ -26,10 +26,10 @@ public class DirectoryUserDetailsService implements UserDetailsService {
 			PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
 			if (blogUser != null) {
-				return User.withUsername(blogUser.getEmail())
+				return CustomUser.buildCustomUserFromUserDets(User.withUsername(blogUser.getEmail())
 						.password("{bcrypt}"+blogUser.getPassword())
 						.accountLocked(!blogUser.isEnabled())
-						.roles(blogUser.getRole()).build();
+						.roles(blogUser.getRole()).build(), blogUser.getId());
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

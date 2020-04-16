@@ -1,4 +1,4 @@
-import * as blogActions from "./../actions/blogActions";
+import * as blogActions from "./../actions/blogActionTypes";
 import { initState } from "./initStates/blog";
 import { convertFromRaw, EditorState } from "draft-js";
 import { showToast } from "../utils/utilities";
@@ -12,7 +12,6 @@ export default function info(
 ) {
   switch (type) {
     case blogActions.FETCH_POSTS:
-      debugger;
       const links = parseHeaderForLinks(headers.link);
       return {
         ...state,
@@ -63,24 +62,15 @@ export default function info(
           summary: payload
         }
       };
-
     case blogActions.SUBMIT_POST:
-      showToast("Post Updated");
+      showToast("Post Submitted.");
       return {
-        ...state,
-        post: {
-          id: payload.id,
-          title: payload.title,
-          summary: payload.summary,
-          datePosted: payload.datePosted,
-          content: EditorState.createWithContent(
-            convertFromRaw(JSON.parse(payload.content))
-          )
-        }
+        ...state
       };
-    case blogActions.RESET:
+    case blogActions.SUBMIT_REVIEW:
+      showToast("Review Submitted. It will be published soon!");
       return {
-        ...initState
+        ...state
       };
     default:
       return { ...state };

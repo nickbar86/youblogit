@@ -2,13 +2,12 @@ import React from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { reduxForm, Field, formValueSelector } from "redux-form";
-import MaterializeTextField from "./../fields/MaterializeTextField";
+import MaterializeTextField from "./../fields/materializeTextField";
 import { withStyles } from "@material-ui/core/styles";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -17,7 +16,7 @@ import { DateTimePicker } from "@material-ui/pickers";
 const styles = theme => {
   return {
     paper: {
-      marginTop: theme.spacing(8),
+      marginTop: theme.spacing(4),
       display: "flex",
       flexDirection: "column",
       alignItems: "center"
@@ -42,28 +41,24 @@ const styles = theme => {
 
 class Profile extends React.Component {
   onSubmit = formProps => {
-    /*this.props.signUp(
+    this.props.updateUserProfile(
       formProps.name,
       formProps.email,
-      formProps.password,
-      () => {
-        this.props.history.push("/user/signin");
-      }
-    );*/
+      formProps.password
+    );
   };
 
   render() {
-    const {
-      classes,
-      handleSubmit,
-      submitting,
-      formValues
-    } = this.props;
+    const { classes, handleSubmit, submitting, formValues } = this.props;
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <Avatar className={formValues.enabled?classes.avatarUnlocked:classes.avatarLocked}>
+          <Avatar
+            className={
+              formValues.enabled ? classes.avatarUnlocked : classes.avatarLocked
+            }
+          >
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
@@ -112,7 +107,7 @@ class Profile extends React.Component {
                 <Field
                   name="password"
                   id="password"
-                  label="Password"
+                  label="New Password"
                   component={MaterializeTextField}
                   //autoComplete="current-password"
                   type="password"
@@ -141,7 +136,6 @@ class Profile extends React.Component {
             >
               Update
             </Button>
-
           </form>
         </div>
       </Container>

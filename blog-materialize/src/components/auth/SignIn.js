@@ -2,21 +2,17 @@ import React from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { reduxForm, Field } from "redux-form";
-import MaterializeTextField from "./../fields/MaterializeTextField";
-import { withStyles, createStyles } from "@material-ui/core/styles";
+import MaterializeTextField from "./../fields/materializeTextField";
+import { withStyles } from "@material-ui/core/styles";
 import { signIn } from "./../../actions/applicationActions";
 import { connect } from "react-redux";
 import { compose } from "redux";
-
 
 const styles = theme => {
   return {
@@ -41,15 +37,13 @@ const styles = theme => {
 };
 
 class SignIn extends React.Component {
-
   onSubmit = formProps => {
     this.props.signIn(formProps.email, formProps.password, () => {
-      this.props.history.push("/blog");
+      this.props.history.push("/user/blog");
     });
   };
 
   render() {
-    debugger;
     const { classes, handleSubmit } = this.props;
     return (
       <Container component="main" maxWidth="xs">
@@ -61,10 +55,7 @@ class SignIn extends React.Component {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form
-            className={classes.form}
-            onSubmit={handleSubmit(this.onSubmit)}
-          >
+          <form className={classes.form} onSubmit={handleSubmit(this.onSubmit)}>
             <Field
               name="email"
               id="email"

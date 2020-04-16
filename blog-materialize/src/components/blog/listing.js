@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 <CardActions>
 
 </CardActions>*/
-export default ({ posts, handleLoadMore, activePage, links, onSelect }) => {
+export default ({ posts, user, handleLoadMore, activePage, links, onSelect }) => {
   const classes = useStyles();
   const list =
     posts &&
@@ -48,9 +48,7 @@ export default ({ posts, handleLoadMore, activePage, links, onSelect }) => {
                     {post.title}
                   </Typography>
                   <Typography variant="subtitle1" color="textSecondary">
-                    {`${new Date(post.datePosted).toLocaleString()} by ${
-                      post.editorName
-                    }`}
+                    {`${new Date(post.datePosted).toLocaleString()}`}
                   </Typography>
                   <Typography variant="subtitle1" paragraph>
                     {post.summary}
@@ -71,7 +69,7 @@ export default ({ posts, handleLoadMore, activePage, links, onSelect }) => {
               )}
             </CardActionArea>
 
-            <CardActions>
+            {post.blogUserId===user.userid?<CardActions>
               <Button
                 //  style={{ marginBottom: "10px" }}
                 component={RouterLink}
@@ -80,7 +78,7 @@ export default ({ posts, handleLoadMore, activePage, links, onSelect }) => {
               >
                 Edit
               </Button>
-            </CardActions>
+            </CardActions>:null}
           </Card>
         </Grid>
       );
@@ -97,7 +95,7 @@ export default ({ posts, handleLoadMore, activePage, links, onSelect }) => {
         loadMore={handleLoadMore}
         hasMore={activePage <= links.last}
         threshold={1}
-        loader={<CircularProgress />}
+        loader={<CircularProgress key="-1" />}
       >
         {list}
       </InfiniteScroll>

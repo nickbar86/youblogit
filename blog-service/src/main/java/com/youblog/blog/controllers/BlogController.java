@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +21,7 @@ import org.springframework.integration.handler.advice.RequestHandlerCircuitBreak
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -68,18 +70,29 @@ public class BlogController implements IBlog {
 
 	@Override
 	public Mono<ResponseEntity> getPosts(
+			@RequestParam(name = "userPosts", required = false, defaultValue = "false") boolean userPosts,
 			@RequestParam(name = "page", required = false, defaultValue = "0") int pageIndex,
 			@RequestParam(name = "size", required = true, defaultValue = "10") int pageSize,
 			@RequestParam(name = "sort", required = true, defaultValue = "id") String sort,
 			@RequestParam(name = "direction", required = true, defaultValue = "DESC") Sort.Direction direction) {
 
-		Mono<ClientResponse> monoReponse = integration.getPosts(pageIndex, pageSize, sort, direction);
-		Flux<PostDTO> posts = monoReponse.flatMapMany(response -> response.bodyToFlux(PostDTO.class).log());
+		Mono<ClientResponse> postsResponse;
+		if (userPosts) {
+			postsResponse = ReactiveSecurityContextHolder
+					.getContext()
+					.map(sc -> getUserIdFromSC(sc))
+					.flatMap(userId -> {
+						return integration.getPostsByUserId(userId, pageIndex, pageSize, sort, direction);
+					});
+		} else {
+			postsResponse = integration.getPosts(pageIndex, pageSize, sort, direction);
+		}
+		Flux<PostDTO> posts = postsResponse.flatMapMany(response -> response.bodyToFlux(PostDTO.class).log());
 		Flux<PostRanking> avgRankings = posts.flatMap(post -> integration.getPostAvgRanking(post.getId()));
 		Flux<PostRankingDTO> postRankings = avgRankings.collectMap(PostRanking::getPostId, PostRanking::getAvgRanking)
 				.flatMapMany(mapToPostRankingDTO(posts));
 		return Mono.zip(values -> createPostsAggregate((ClientResponse) values[0], (List<PostRankingDTO>) values[1]),
-				monoReponse, postRankings.collectList()).cast(ResponseEntity.class);
+				postsResponse, postRankings.collectList()).cast(ResponseEntity.class);
 	}
 
 	private Function<? super Map<Long, Float>, ? extends Publisher<? extends PostRankingDTO>> mapToPostRankingDTO(
@@ -165,6 +178,7 @@ public class BlogController implements IBlog {
 		try {
 			logAuthorizationInfo(sc);
 			LOG.debug("internalCreatePost: creates a new for post", body.getTitle());
+			body.setBlogUserId(getUserIdFromSC(sc).intValue());
 			integration.createPost(body);
 			LOG.debug("internalCreatePost: created a new for post", body.getTitle());
 		} catch (RuntimeException re) {
@@ -191,6 +205,15 @@ public class BlogController implements IBlog {
 		} catch (RuntimeException re) {
 			LOG.warn("internalDeletePost failed: {}", re.toString());
 			throw re;
+		}
+	}
+
+	private Long getUserIdFromSC(SecurityContext sc) {
+		if (sc != null && sc.getAuthentication() != null && sc.getAuthentication() instanceof JwtAuthenticationToken) {
+			Jwt jwtToken = ((JwtAuthenticationToken) sc.getAuthentication()).getToken();
+			return (Long) jwtToken.getClaims().get("userid");
+		} else {
+			return null;
 		}
 	}
 
@@ -266,6 +289,7 @@ public class BlogController implements IBlog {
 		try {
 			logAuthorizationInfo(sc);
 			LOG.debug("internalUpdatePost: updates an existing postid:{}", body.getId());
+			body.setBlogUserId(getUserIdFromSC(sc).intValue());
 			integration.updatePost(body);
 			LOG.debug("internalUpdatePost: updated existing postId:{}", body.getId());
 		} catch (RuntimeException re) {
@@ -289,6 +313,7 @@ public class BlogController implements IBlog {
 		try {
 			logAuthorizationInfo(sc);
 			LOG.debug("internalCreateReview: creates a Review for post: {}", body.getPostId());
+			body.setUserId(getUserIdFromSC(sc).intValue());
 			integration.createReview(body);
 			LOG.debug("internalCreateReview: created a Review for post: {}", body.getPostId());
 		} catch (RuntimeException re) {
@@ -352,14 +377,18 @@ public class BlogController implements IBlog {
 	}
 
 	private BlogUserInfoDTO getUserFallbackValue(BlogUserDTO body) {
-		// TODO Auto-generated method stub
 		return new BlogUserInfoDTO();
 	}
 
 	@Override
 	public Mono<BlogUserInfoDTO> updateExistingUser(BlogUserDTO body) {
-		return integration.saveUser(body)
-				.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
+		return ReactiveSecurityContextHolder.getContext().map(SecurityContext::getAuthentication)
+				.flatMap(auth -> integration.getUserByEmail(auth.getName())).flatMap(user -> {
+					body.setId(user.getId());
+					body.setRole(user.getRole());
+					body.setEnabled(user.isEnabled());
+					return integration.saveUser(body);
+				}).onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
 				.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue(body));
 	}
 
@@ -376,11 +405,10 @@ public class BlogController implements IBlog {
 
 	@Override
 	public Mono<BlogUserInfoDTO> fetchSignedInUser() {
-		return ReactiveSecurityContextHolder.getContext()
-        .map(SecurityContext::getAuthentication)
-        .flatMap(auth->integration.getUserByEmail(auth.getName()))
-		.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
-		.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue(null));
-	
+		return ReactiveSecurityContextHolder.getContext().map(SecurityContext::getAuthentication)
+				.flatMap(auth -> integration.getUserByEmail(auth.getName()))
+				.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
+				.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue(null));
+
 	}
 }

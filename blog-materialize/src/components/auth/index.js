@@ -3,11 +3,12 @@ import { Route, Switch } from "react-router-dom";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import SignOut from "./SignOut";
-import UserProfileContainer from "./../../containers/UserProfileContainer"
+import UserProfileContainer from "./../../containers/UserProfileContainer";
 import PrivateRoute from "./../PrivateRoute";
+import BlogContainer from "./../../containers/BlogContainer";
+import BlogListContainer from "./../../containers/BlogListContainer";
 import { connect } from "react-redux";
 export const Routes = ({ match, history, authenticated }) => {
-  debugger;
   return (
     <Switch>
       <Route exact path={`${match.path}/signin`} component={SignIn} />
@@ -19,6 +20,18 @@ export const Routes = ({ match, history, authenticated }) => {
         path={`${match.path}/profile`}
         isAllowed={authenticated}
         component={UserProfileContainer}
+      />
+      <PrivateRoute
+        exact
+        path={`${match.path}/blog/:id`}
+        isAllowed={authenticated}
+        component={BlogContainer}
+      />
+      <PrivateRoute
+        exact
+        path={`${match.path}/blog`}
+        isAllowed={authenticated}
+        component={BlogListContainer}
       />
     </Switch>
   );

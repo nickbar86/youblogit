@@ -7,7 +7,8 @@ import ErrorBoundary from "./../components/ErrorBoundary";
 import { getSortState } from "../utils/paginationUtils";
 class BlogListContainer extends Component {
   state = {
-    ...getSortState(this.props.location, 20)
+    ...getSortState(this.props.location, 20),
+    userPosts: this.props.location.pathname === "/user/blog"
   };
 
   componentDidMount() {
@@ -16,7 +17,9 @@ class BlogListContainer extends Component {
 
   reset = () => {
     this.props.reset();
-    this.setState({ activePage: 0 }, () => this.getAllPosts());
+    this.setState({ activePage: 0 }, () =>
+      this.getAllPosts(this.state.userPosts)
+    );
   };
 
   handleLoadMore = page => {
@@ -37,12 +40,18 @@ class BlogListContainer extends Component {
 
   getAllPosts = () => {
     const { activePage, itemsPerPage, sort, order } = this.state;
-    this.props.getAllPosts(activePage, itemsPerPage, `${sort},${order}`);
+    this.props.getAllPosts(
+      this.state.userPosts,
+      activePage,
+      itemsPerPage,
+      `${sort},${order}`
+    );
   };
 
   onSelect = id => {
-    debugger;
-    this.props.history.push(`/blog/${id}`);
+    this.props.history.push(
+      `/blog/${id}`
+    );
   };
 
   render() {
@@ -58,17 +67,22 @@ class BlogListContainer extends Component {
             activePage={this.state.activePage}
             links={this.props.links}
             onSelect={this.onSelect}
+            user={this.props.user}
           />
         </Container>
       </ErrorBoundary>
     );
   }
 }
-function mapStateToPros({ blog: { posts, links } }, { location }) {
+function mapStateToPros(
+  { blog: { posts, links }, info: { user } },
+  { location }
+) {
   return {
     posts,
     location,
-    links
+    links,
+    user
   };
 }
 export default connect(
