@@ -75,7 +75,7 @@ public class PostControllerTest {
 		List<Post> listPaged = originalPosts.stream().limit(10).collect(Collectors.toList());
 		Page<PostDTO> pageDto = new PageImpl<>(dtoListPaged, pageRequest, 10);
 		Page<Post> page = new PageImpl<>(listPaged, pageRequest, 10);
-		Mockito.when(service.retrievePosts(pageRequest)).thenReturn(pageDto);
+		Mockito.when(service.retrievePosts(pageRequest, null)).thenReturn(pageDto);
 		Mockito.when(repo.findAll(pageRequest)).thenReturn(page);
 		MvcResult result = mockMvc.perform(get("/posts/?page=0&size=10"))
 				.andExpect(status().isOk())
@@ -93,7 +93,7 @@ public class PostControllerTest {
 		List<Post> listPaged = originalPosts.stream().limit(20).collect(Collectors.toList());
 		Page<PostDTO> pageDto = new PageImpl<>(dtoListPaged, pageRequest, dtoListPaged.size());
 		Page<Post> page = new PageImpl<>(listPaged, pageRequest, listPaged.size());
-		Mockito.when(service.retrievePosts(pageRequest)).thenReturn(pageDto);
+		Mockito.when(service.retrievePosts(pageRequest, null)).thenReturn(pageDto);
 		Mockito.when(repo.findAll(pageRequest)).thenReturn(page);
 		MvcResult result = mockMvc.perform(get("/posts/"))
 				.andExpect(status().isOk())

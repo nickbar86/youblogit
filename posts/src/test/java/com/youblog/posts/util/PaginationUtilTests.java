@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ public class PaginationUtilTests {
 		String baseUrl = "/api/_search/example";
 		List<String> content = new ArrayList<>();
 		Page<String> page = new PageImpl<>(content, PageRequest.of(6, 50), 400L);
-		HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, baseUrl);
+		HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, baseUrl, Optional.empty());
 		List<String> strHeaders = headers.get(HttpHeaders.LINK);
 		assertNotNull(strHeaders);
 		assertTrue(strHeaders.size() == 1);

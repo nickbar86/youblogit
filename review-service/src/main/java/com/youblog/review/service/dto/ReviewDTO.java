@@ -2,8 +2,6 @@ package com.youblog.review.service.dto;
 
 import java.time.LocalDateTime;
 
-import org.bson.types.ObjectId;
-
 public class ReviewDTO {
 	private String reviewId;
 	private LocalDateTime datePosted;
@@ -15,6 +13,7 @@ public class ReviewDTO {
 	public ReviewDTO() {
 		super();
 	}
+
 
 	public ReviewDTO(String reviewId, LocalDateTime datePosted, Integer userId, Long postId, String review,
 			Integer ranking) {

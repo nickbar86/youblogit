@@ -15,16 +15,87 @@ public class PostDTO {
 	private LocalDateTime dateUpdated;
 	private Integer blogUserId;
 
-	public PostDTO(long id, String port, String title, String summary, String content, LocalDateTime datePosted,
-			LocalDateTime dateUpdated, Integer blogUserId) {
-		this.id = id;
-		this.port = port;
-		this.title = title;
-		this.summary = summary;
-		this.content = content;
-		this.datePosted = datePosted;
-		this.blogUserId = blogUserId;
-		this.setDateUpdated(dateUpdated);
+	protected PostDTO(PostDTOBuilder<?> builder) {
+		this.id = builder.id;
+		this.port = builder.port;
+		this.title = builder.title;
+		this.summary = builder.summary;
+		this.content = builder.content;
+		this.datePosted = builder.datePosted;
+		this.blogUserId = builder.blogUserId;
+		this.setDateUpdated(builder.dateUpdated);
+	}
+
+	public static class PostDTOBuilder<T extends PostDTOBuilder<T>> {
+		private Long id;
+		private String port;
+		private String title;
+		private String summary;
+		private String content;
+		private LocalDateTime datePosted;
+		private LocalDateTime dateUpdated;
+		private Integer blogUserId;
+
+		public static PostDTOBuilder withDtoBuilder() {
+			return new PostDTOBuilder();
+		}
+
+		protected PostDTOBuilder() {
+
+		}
+		
+		@SuppressWarnings("unchecked")
+		public  T id(long id) {
+			this.id=id;
+			return (T)this;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public  T port(String port) {
+			this.port=port;
+			return (T)this;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public  T title(String title) {
+			this.title=title;
+			return (T)this;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public  T summary(String summary) {
+			this.summary=summary;
+			return (T)this;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public  T content(String content) {
+			this.content=content;
+			return (T)this;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public  T datePosted(LocalDateTime datePosted) {
+			this.datePosted=datePosted;
+			return (T)this;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public  T dateUpdated(LocalDateTime dateUpdated) {
+			this.dateUpdated=dateUpdated;
+			return (T)this;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public T blogUserId(Integer blogUserId) {
+			this.blogUserId=blogUserId;
+			return (T)this;
+		}
+		
+		public PostDTO build() 
+        { 
+            return new PostDTO(this); 
+        } 
 	}
 
 	public PostDTO() {

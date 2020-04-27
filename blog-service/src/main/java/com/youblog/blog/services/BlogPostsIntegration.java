@@ -46,9 +46,9 @@ public class BlogPostsIntegration {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BlogPostsIntegration.class);
 
-	private final String postServiceUrl = "http://post-service";
-	private final String reviewServiceUrl = "http://review-service";
-	private final String userServiceUrl = "http://user-service";
+	private static final String postServiceUrl = "http://post-service";
+	private static final String reviewServiceUrl = "http://review-service";
+	private static final String userServiceUrl = "http://user-service";
 	private String systemAuthUsername;
 	private String systemAuthPassword;
 
@@ -111,7 +111,7 @@ public class BlogPostsIntegration {
 		LOG.debug("Will call the getPost API on URL: {}", url);
 
 		return getWebClient().get().uri(url).retrieve().bodyToMono(PostDTO.class).log()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.onErrorMap(WebClientResponseException.class, this::handleException)
 				.timeout(Duration.ofSeconds(postServiceTimeoutSec));
 	}
 
@@ -122,7 +122,7 @@ public class BlogPostsIntegration {
 				.queryParam("size", pageSize).queryParam("sort", sort).queryParam("direction", direction).build();
 		LOG.debug("Will call the getPost API on URL: {}", url);
 		return getWebClient().get().uri(url.toUri()).exchange().log()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.onErrorMap(WebClientResponseException.class, this::handleException)
 				.timeout(Duration.ofSeconds(postServiceTimeoutSec));
 	}
 
@@ -136,7 +136,7 @@ public class BlogPostsIntegration {
 		URI url = UriComponentsBuilder.fromUriString(reviewServiceUrl + "/reviews/?postId={postId}").build(postId);
 		LOG.debug("Will call the getReviews API on URL: {}", url);
 		return getWebClient().get().uri(url).retrieve().bodyToFlux(ReviewDTO.class).log()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.onErrorMap(WebClientResponseException.class, this::handleException)
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}
 
@@ -147,7 +147,7 @@ public class BlogPostsIntegration {
 				.buildAndExpand(postId).toUri();
 		LOG.debug("Will call the getReviews API on URL: {}", url);
 		return getWebClient().get().uri(url).retrieve().bodyToMono(PostRanking.class).log()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.onErrorMap(WebClientResponseException.class, this::handleException)
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}
 
@@ -170,7 +170,7 @@ public class BlogPostsIntegration {
 	private Throwable handleException(Throwable ex) {
 
 		if (!(ex instanceof WebClientResponseException)) {
-			LOG.warn("Got a unexpected error: {}, will rethrow it", ex.toString());
+			LOG.warn("Got a unexpected error: {}, will rethrow it", ex);
 			return ex;
 		}
 
@@ -205,7 +205,7 @@ public class BlogPostsIntegration {
 		URI url = UriComponentsBuilder.fromUriString(reviewServiceUrl + "/reviews/{reviewId}/").build(reviewId);
 		LOG.debug("Will call the getReviews API on URL: {}", url);
 		return getWebClient().get().uri(url).retrieve().bodyToMono(ReviewDTO.class).log()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.onErrorMap(WebClientResponseException.class, this::handleException)
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}
 
@@ -243,7 +243,7 @@ public class BlogPostsIntegration {
 		body.setEnabled(true);
 		return getAuthenticatedClient().post().uri(url.toUri()).contentType(MediaType.APPLICATION_JSON).bodyValue(body)
 				.retrieve().bodyToMono(BlogUserInfoDTO.class).log()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.onErrorMap(WebClientResponseException.class, this::handleException)
 				.timeout(Duration.ofSeconds(userServiceTimeoutSec));
 	}
 
@@ -254,7 +254,7 @@ public class BlogPostsIntegration {
 		LOG.debug("Will call the update User API on URL: {}", url.toUri());
 		return getAuthenticatedClient().post().uri(url.toUri()).contentType(MediaType.APPLICATION_JSON).bodyValue(body)
 				.retrieve().bodyToMono(BlogUserInfoDTO.class).log()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.onErrorMap(WebClientResponseException.class, this::handleException)
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}
 
@@ -264,7 +264,7 @@ public class BlogPostsIntegration {
 		URI url = UriComponentsBuilder.fromUriString(userServiceUrl + "/blogUsers/{userId}").build(userId);
 		LOG.debug("Will call the getUserDetails API on URL: {}", url);
 		return getAuthenticatedClient().get().uri(url).retrieve().bodyToMono(BlogUserDetails.class).log()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.onErrorMap(WebClientResponseException.class, this::handleException)
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}
 
@@ -273,7 +273,7 @@ public class BlogPostsIntegration {
 		UriComponents url = UriComponentsBuilder.fromUriString(userServiceUrl + "/blogUsers").build();
 		LOG.debug("Will call the create User API on URL: {}", url);
 		return getAuthenticatedClient().get().uri(url.toUri()).retrieve().bodyToFlux(BlogUserInfoDTO.class).log()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.onErrorMap(WebClientResponseException.class, this::handleException)
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}
 
@@ -282,7 +282,7 @@ public class BlogPostsIntegration {
 		URI url = UriComponentsBuilder.fromUriString(userServiceUrl + "/blogUsers/{userId}").build(userId);
 		LOG.debug("Will call the delete User API on URL: {}", url);
 		return getAuthenticatedClient().delete().uri(url.getPath()).exchange()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.onErrorMap(WebClientResponseException.class, this::handleException)
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec)).then();
 	}
 
@@ -294,7 +294,7 @@ public class BlogPostsIntegration {
 				.build();
 		LOG.debug("Will call the getUserDetails by email API on URL: {}", url.toUri());
 		return getAuthenticatedClient().get().uri(url.toUri()).retrieve().bodyToMono(BlogUserInfoDTO.class).log()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.onErrorMap(WebClientResponseException.class, this::handleException)
 				.timeout(Duration.ofSeconds(reviewServiceTimeoutSec));
 	}
 
@@ -308,7 +308,7 @@ public class BlogPostsIntegration {
 				.queryParam("direction", direction).build();
 		LOG.debug("Will call the getPost API on URL: {}", url);
 		return getWebClient().get().uri(url.toUri()).exchange().log()
-				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+				.onErrorMap(WebClientResponseException.class, this::handleException)
 				.timeout(Duration.ofSeconds(postServiceTimeoutSec));
 	}
 

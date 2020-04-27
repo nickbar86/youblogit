@@ -1,15 +1,54 @@
 package com.youblog.blog.services.dto;
 
-import java.time.LocalDateTime;
-
 public class PostRankingDTO extends PostDTO {
 	private Float ranking;
 	private BlogUserDetails user;
 
-	public PostRankingDTO(long id, String port, String title, String summary, String content, LocalDateTime datePosted, LocalDateTime dateUpdated,
-			Integer userId, Float ranking) {
-		super(id, port, title, summary, content, datePosted, datePosted, userId);
-		this.setRanking(ranking);
+	private PostRankingDTO(PostRankingDTOBuilder builder) {
+		super(builder);
+		this.setRanking(builder.ranking);
+		this.setUser(builder.user);
+	}
+	
+	public static class PostRankingDTOBuilder extends PostDTO.PostDTOBuilder<PostRankingDTOBuilder>{
+		private Float ranking;
+		private BlogUserDetails user;
+
+		public static PostRankingDTOBuilder withDtoBuilder() {
+			return new PostRankingDTOBuilder();
+		}
+		
+		public static PostRankingDTOBuilder withPostDto(PostDTO post) {
+			return new PostRankingDTOBuilder()
+					.id(post.getId())
+					.port(post.getPort())
+					.title(post.getTitle())
+					.summary(post.getSummary())
+					.content(post.getContent())
+					.datePosted(post.getDatePosted())
+					.dateUpdated(post.getDateUpdated())
+					.blogUserId(post.getBlogUserId());
+		}
+
+		private PostRankingDTOBuilder() {
+
+		}
+		
+		public  PostRankingDTOBuilder ranking(Float ranking) {
+			this.ranking=ranking;
+			return this;
+		}
+		
+		public  PostRankingDTOBuilder user(BlogUserDetails user) {
+			this.user=user;
+			return this;
+		}
+		
+		@Override
+		public PostRankingDTO build() 
+        { 
+            return new PostRankingDTO(this); 
+        } 
 	}
 
 	public Float getRanking() {

@@ -34,7 +34,7 @@ public class ReviewService {
 	}
 
 	public Mono<PostRanking> getPostAvgRanking(Long postId) {
-		LOG.info("Fetching Avg Ranking Score for post:" + postId);
+		LOG.info("Fetching Avg Ranking Score for post:{}" ,postId);
 		return repository.getPostAvgRanking(postId);
 	}
 

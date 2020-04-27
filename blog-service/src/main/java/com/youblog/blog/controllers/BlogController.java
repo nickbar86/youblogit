@@ -5,28 +5,26 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.integration.handler.advice.RequestHandlerCircuitBreakerAdvice.CircuitBreakerOpenException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -39,9 +37,12 @@ import com.youblog.blog.services.dto.BlogUserDTO;
 import com.youblog.blog.services.dto.BlogUserDetails;
 import com.youblog.blog.services.dto.BlogUserInfoDTO;
 import com.youblog.blog.services.dto.PostDTO;
+import com.youblog.blog.services.dto.PostDTO.PostDTOBuilder;
 import com.youblog.blog.services.dto.PostRanking;
 import com.youblog.blog.services.dto.PostRankingDTO;
+import com.youblog.blog.services.dto.PostRankingDTO.PostRankingDTOBuilder;
 import com.youblog.blog.services.dto.ReviewDTO;
+import com.youblog.util.exceptions.InternalApplicationException;
 import com.youblog.util.exceptions.InvalidInputException;
 import com.youblog.util.exceptions.NotFoundException;
 import com.youblog.util.http.HttpErrorInfo;
@@ -53,6 +54,8 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class BlogController implements IBlog {
+
+	private static final String NO_USER_ID = "No User Id";
 
 	private static final Logger LOG = LoggerFactory.getLogger(BlogController.class);
 
@@ -78,12 +81,8 @@ public class BlogController implements IBlog {
 
 		Mono<ClientResponse> postsResponse;
 		if (userPosts) {
-			postsResponse = ReactiveSecurityContextHolder
-					.getContext()
-					.map(sc -> getUserIdFromSC(sc))
-					.flatMap(userId -> {
-						return integration.getPostsByUserId(userId, pageIndex, pageSize, sort, direction);
-					});
+			postsResponse = ReactiveSecurityContextHolder.getContext().map(this::getUserIdFromSC)
+					.flatMap(userId -> integration.getPostsByUserId(userId, pageIndex, pageSize, sort, direction));
 		} else {
 			postsResponse = integration.getPosts(pageIndex, pageSize, sort, direction);
 		}
@@ -98,27 +97,21 @@ public class BlogController implements IBlog {
 	private Function<? super Map<Long, Float>, ? extends Publisher<? extends PostRankingDTO>> mapToPostRankingDTO(
 			Flux<PostDTO> posts) {
 		return rankings -> posts.handle((post, sink) -> {
-			Long postId = post.getId();
-			if (rankings.keySet().contains(postId)) {
-				Float ranking = rankings.get(postId);
-				PostRankingDTO complete = new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(),
-						post.getSummary(), post.getContent(), post.getDatePosted(), post.getDateUpdated(),
-						post.getBlogUserId(), ranking);
-				// complete.setUser(userDetail);
-				sink.next(complete);
+			PostRankingDTOBuilder builder = PostRankingDTO
+					.PostRankingDTOBuilder
+					.withPostDto(post);
+			if (rankings.keySet().contains(post.getId())) {
+				sink.next(builder.ranking(rankings.get(post.getId())).build());
 			} else {
-				PostRankingDTO complete = new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(),
-						post.getSummary(), post.getContent(), post.getDatePosted(), post.getDateUpdated(),
-						post.getBlogUserId(), null);
-				sink.next(complete);
+				sink.next(builder.build());
 			}
 		});
 	}
 
 	private ResponseEntity<List<PostRankingDTO>> createPostsAggregate(ClientResponse response,
 			List<PostRankingDTO> list) {
-		List<String> links = response.headers().header("Link").stream()
-				.map(link -> link.replaceAll("posts", "blog-post")).collect(Collectors.toList());
+		List<String> links = response.headers().header("Link").stream().map(link -> link.replace("posts", "blog-post"))
+				.collect(Collectors.toList());
 		List<String> xTotalCount = response.headers().header("X-Total-Count");
 		HttpHeaders headers = new HttpHeaders();
 		headers.addAll("X-Total-Count", xTotalCount);
@@ -133,15 +126,13 @@ public class BlogController implements IBlog {
 						(SecurityContext) values[0], (PostDTO) values[1], (PostRanking) values[2]),
 						ReactiveSecurityContextHolder.getContext().defaultIfEmpty(nullSC),
 						integration.getPost(postId, delay, faultPercent)
-								.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
+								.onErrorMap(RetryExceptionWrapper.class, RetryExceptionWrapper::getCause)
 								.onErrorReturn(CircuitBreakerOpenException.class, getPostFallbackValue(postId)),
 						integration.getPostAvgRanking(postId)
-								.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
+								.onErrorMap(RetryExceptionWrapper.class, RetryExceptionWrapper::getCause)
 								.onErrorReturn(CircuitBreakerOpenException.class, getRankingFallbackValue()))
-				.doOnError(ex -> LOG.warn("getPost failed: {}", ex.toString())).log();
-		Mono<BlogUserDetails> userDetail = postRankingMono.flatMap(post -> {
-			return integration.getUser(post.getBlogUserId());
-		});
+				.doOnError(ex -> LOG.warn("getPost failed: {}", ex)).log();
+		Mono<BlogUserDetails> userDetail = postRankingMono.flatMap(post -> integration.getUser(post.getBlogUserId()));
 		return Mono.zip(values -> creatPostAggregateWithUser((PostRankingDTO) values[0], (BlogUserDetails) values[1]),
 				postRankingMono, userDetail);
 
@@ -154,8 +145,8 @@ public class BlogController implements IBlog {
 
 	private PostDTO getPostFallbackValue(int postId) {
 		LOG.warn("Creating a fallback post for postId = {}", postId);
-		return new PostDTO(postId, serviceUtil.getServicePort(), "No Results", "This is a fallback", null, null, null,
-				null);
+		return PostDTOBuilder.withDtoBuilder().id(postId).port(serviceUtil.getServicePort()).title("No Results")
+				.summary("This is a default message").build();
 	}
 
 	private PostRanking getRankingFallbackValue() {
@@ -165,8 +156,11 @@ public class BlogController implements IBlog {
 
 	private PostRankingDTO createPostAggregate(SecurityContext sc, PostDTO post, PostRanking avgRanking) {
 		logAuthorizationInfo(sc);
-		return new PostRankingDTO(post.getId(), post.getPort(), post.getTitle(), post.getSummary(), post.getContent(),
-				post.getDatePosted(), post.getDateUpdated(), post.getBlogUserId(), avgRanking.getAvgRanking());
+		return PostRankingDTO
+			.PostRankingDTOBuilder
+			.withPostDto(post)
+			.ranking(avgRanking.getAvgRanking())
+			.build();
 	}
 
 	@Override
@@ -177,13 +171,13 @@ public class BlogController implements IBlog {
 	public void internalCreatePost(SecurityContext sc, PostDTO body) {
 		try {
 			logAuthorizationInfo(sc);
-			LOG.debug("internalCreatePost: creates a new for post", body.getTitle());
-			body.setBlogUserId(getUserIdFromSC(sc).intValue());
+			LOG.debug("internalCreatePost: creates a new for post {}", body.getTitle());
+			body.setBlogUserId(Optional.ofNullable(getUserIdFromSC(sc))
+					.orElseThrow(() -> new AccessDeniedException(NO_USER_ID)).intValue());
 			integration.createPost(body);
-			LOG.debug("internalCreatePost: created a new for post", body.getTitle());
+			LOG.debug("internalCreatePost: created a new for post {}", body.getTitle());
 		} catch (RuntimeException re) {
-			LOG.warn("internalCreatePost failed: {}", re.toString());
-			throw re;
+			throw new InternalApplicationException(re);
 		}
 	}
 
@@ -203,8 +197,7 @@ public class BlogController implements IBlog {
 			internalDeletePostReviews(postId);
 			LOG.debug("internalDeletePost: Deleted a post with postId: {}", postId);
 		} catch (RuntimeException re) {
-			LOG.warn("internalDeletePost failed: {}", re.toString());
-			throw re;
+			throw new InternalApplicationException(re);
 		}
 	}
 
@@ -246,7 +239,7 @@ public class BlogController implements IBlog {
 	private Throwable handleException(Throwable ex) {
 
 		if (!(ex instanceof WebClientResponseException)) {
-			LOG.warn("Got a unexpected error: {}, will rethrow it", ex.toString());
+			LOG.warn("Got a unexpected error: {}, will rethrow it", ex);
 			return ex;
 		}
 
@@ -289,12 +282,12 @@ public class BlogController implements IBlog {
 		try {
 			logAuthorizationInfo(sc);
 			LOG.debug("internalUpdatePost: updates an existing postid:{}", body.getId());
-			body.setBlogUserId(getUserIdFromSC(sc).intValue());
+			body.setBlogUserId(Optional.ofNullable(getUserIdFromSC(sc))
+					.orElseThrow(() -> new AccessDeniedException(NO_USER_ID)).intValue());
 			integration.updatePost(body);
 			LOG.debug("internalUpdatePost: updated existing postId:{}", body.getId());
 		} catch (RuntimeException re) {
-			LOG.warn("internalUpdatePost failed: {}", re.toString());
-			throw re;
+			throw new InternalApplicationException(re);
 		}
 	}
 
@@ -313,12 +306,12 @@ public class BlogController implements IBlog {
 		try {
 			logAuthorizationInfo(sc);
 			LOG.debug("internalCreateReview: creates a Review for post: {}", body.getPostId());
-			body.setUserId(getUserIdFromSC(sc).intValue());
+			body.setUserId(Optional.ofNullable(getUserIdFromSC(sc))
+					.orElseThrow(() -> new AccessDeniedException(NO_USER_ID)).intValue());
 			integration.createReview(body);
 			LOG.debug("internalCreateReview: created a Review for post: {}", body.getPostId());
 		} catch (RuntimeException re) {
-			LOG.warn("internalCreateReview: create Review for post failed: {}", re.toString());
-			throw re;
+			throw new InternalApplicationException(re);
 		}
 	}
 
@@ -335,8 +328,7 @@ public class BlogController implements IBlog {
 			integration.updateReview(body);
 			LOG.debug("internalUpdateReview: updated an existing review:{}", body.getReviewId());
 		} catch (RuntimeException re) {
-			LOG.warn("internalUpdateReview failed: {}", re.toString());
-			throw re;
+			throw new InternalApplicationException(re);
 		}
 	}
 
@@ -351,8 +343,7 @@ public class BlogController implements IBlog {
 			integration.deletePostReviews(postId);
 			LOG.debug("internalDeleteReview: Deletes review with reviewId: {}", postId);
 		} catch (RuntimeException re) {
-			LOG.warn("internalDeleteReview failed: {}", re.toString());
-			throw re;
+			throw new InternalApplicationException(re);
 		}
 	}
 
@@ -363,20 +354,18 @@ public class BlogController implements IBlog {
 			integration.deleteReview(reviewId);
 			LOG.debug("internalDeleteReview: Deletes review with reviewId: {}", reviewId);
 		} catch (RuntimeException re) {
-			LOG.warn("internalDeleteReview failed: {}", re.toString());
-			throw re;
+			throw new InternalApplicationException(re);
 		}
 	}
 
 	@Override
 	public Mono<BlogUserInfoDTO> createNewUser(BlogUserDTO body) {
-		return integration.createNewUser(body)
-				.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
-				.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue(body));
+		return integration.createNewUser(body).onErrorMap(RetryExceptionWrapper.class, RetryExceptionWrapper::getCause)
+				.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue());
 
 	}
 
-	private BlogUserInfoDTO getUserFallbackValue(BlogUserDTO body) {
+	private BlogUserInfoDTO getUserFallbackValue() {
 		return new BlogUserInfoDTO();
 	}
 
@@ -388,14 +377,13 @@ public class BlogController implements IBlog {
 					body.setRole(user.getRole());
 					body.setEnabled(user.isEnabled());
 					return integration.saveUser(body);
-				}).onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
-				.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue(body));
+				}).onErrorMap(RetryExceptionWrapper.class, RetryExceptionWrapper::getCause)
+				.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue());
 	}
 
 	@Override
 	public Mono<Void> deleteUser(int userId) {
-		return integration.deleteUser(userId).onErrorMap(RetryExceptionWrapper.class,
-				retryException -> retryException.getCause());
+		return integration.deleteUser(userId).onErrorMap(RetryExceptionWrapper.class, RetryExceptionWrapper::getCause);
 	}
 
 	@Override
@@ -407,8 +395,8 @@ public class BlogController implements IBlog {
 	public Mono<BlogUserInfoDTO> fetchSignedInUser() {
 		return ReactiveSecurityContextHolder.getContext().map(SecurityContext::getAuthentication)
 				.flatMap(auth -> integration.getUserByEmail(auth.getName()))
-				.onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
-				.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue(null));
+				.onErrorMap(RetryExceptionWrapper.class, RetryExceptionWrapper::getCause)
+				.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue());
 
 	}
 }

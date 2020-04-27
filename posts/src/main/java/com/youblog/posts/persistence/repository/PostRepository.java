@@ -12,4 +12,5 @@ import com.youblog.posts.persistence.model.Post;
 public interface PostRepository extends PagingAndSortingRepository<Post, Long> {
 	Optional<Post> findById(Long id);
 	Page<Post> findAll(Pageable pageable);
+	Page<Post> findAllByBlogUserId(Pageable pageable, Integer blogUserId);
 }

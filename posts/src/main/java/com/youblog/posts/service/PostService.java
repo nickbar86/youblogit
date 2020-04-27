@@ -36,9 +36,14 @@ public class PostService {
 		this.mapper = mapper;
 	}
 
-	public Page<PostDTO> retrievePosts(Pageable pageable) {
+	public Page<PostDTO> retrievePosts(Pageable pageable, Integer blogUserId) {
 		logger.info("Fetching All Posts");
-		Page<Post> page = repository.findAll(pageable);
+		Page<Post> page;
+		if(blogUserId!=null) {
+			page = repository.findAllByBlogUserId(pageable,blogUserId);
+		}else {
+			page = repository.findAll(pageable);
+		}
 		String port = environment.getProperty("local.server.port");
 		if (port != null) {
 			page.forEach(post -> post.setPort(Integer.parseInt(port)));

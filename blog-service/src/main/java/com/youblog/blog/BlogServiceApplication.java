@@ -10,14 +10,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan("com.youblog.blog, com.youblog.util")
+@ComponentScan("com.youblog.blog, com.youblog.util, com.youblog.blog")
 public class BlogServiceApplication {
 
 	@Bean
 	@LoadBalanced
 	public WebClient.Builder loadBalancedWebClientBuilder() {
-		final WebClient.Builder builder = WebClient.builder();
-		return builder;
+		return WebClient.builder();
 	}
 
 

@@ -21,29 +21,25 @@ import brave.sampler.Sampler;
 public class UserServiceApplication {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UserServiceApplication.class);
-	
+
 	public static void main(String[] args) {
 		ConfigurableApplicationContext ctx = SpringApplication.run(UserServiceApplication.class, args);
 		String mysqlUri = ctx.getEnvironment().getProperty("spring.datasource.url");
-		LOG.info("Connected to MySQL: " + mysqlUri);
+		LOG.info("Connected to MySQL: {}", mysqlUri);
 	}
-	
+
 	@Bean
 	public Sampler defaultSampler() {
 		return Sampler.ALWAYS_SAMPLE;
 	}
 
 	@Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        return bCryptPasswordEncoder;
-    }
+	public BCryptPasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
 	@Bean
-	public RepositoryRestConfigurer repositoryRestConfigurer()
-	{
-	    return RepositoryRestConfigurer.withConfig(config -> {
-	        config.exposeIdsFor(BlogUser.class);
-	    });
+	public RepositoryRestConfigurer repositoryRestConfigurer() {
+		return RepositoryRestConfigurer.withConfig(config -> config.exposeIdsFor(BlogUser.class));
 	}
 }

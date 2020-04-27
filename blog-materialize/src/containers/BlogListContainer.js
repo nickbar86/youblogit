@@ -50,7 +50,7 @@ class BlogListContainer extends Component {
 
   onSelect = id => {
     this.props.history.push(
-      `/blog/${id}`
+      `/blog/${id}${this.state.userPosts?"?edit=true":""}`
     );
   };
 

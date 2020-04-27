@@ -12,8 +12,6 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity

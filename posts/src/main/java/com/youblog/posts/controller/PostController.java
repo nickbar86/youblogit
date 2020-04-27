@@ -1,6 +1,9 @@
 package com.youblog.posts.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +29,12 @@ public class PostController implements IPost {
 	private PostService service;
 
 	@Override
-	public ResponseEntity<List<PostDTO>> retrievePosts(Pageable pageable) {
+	public ResponseEntity<List<PostDTO>> retrievePosts(Pageable pageable, Integer blogUserId) {
 		logger.info("Fetching All Posts");
-		Page<PostDTO> page = service.retrievePosts(pageable);
-		HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/posts/");
+		Page<PostDTO> page = service.retrievePosts(pageable,blogUserId);
+		Map<String, Object> queryParams = new HashMap<String, Object>();
+		queryParams.put("blogUserId", blogUserId);
+		HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/posts/", Optional.of(queryParams));
 		return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
 	}
 

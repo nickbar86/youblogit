@@ -10,11 +10,11 @@ import com.mongodb.reactivestreams.client.MongoClient;
 @Configuration
 public class ReactiveMongoConfig {
 
-	@Autowired
-	MongoClient mongoClient;
+	//@Autowired
+	//MongoClient mongoClient;
 
 	@Bean
-	public ReactiveMongoTemplate reactiveMongoTemplate() {
+	public ReactiveMongoTemplate reactiveMongoTemplate(MongoClient mongoClient) {
 		return new ReactiveMongoTemplate(mongoClient, "review-db");
 	}
 }
