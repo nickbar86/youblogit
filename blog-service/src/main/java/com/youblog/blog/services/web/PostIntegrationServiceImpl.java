@@ -1,4 +1,4 @@
-package com.youblog.blog.services.map;
+package com.youblog.blog.services.web;
 
 import java.net.URI;
 import java.time.Duration;
@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.youblog.blog.services.AbstractIntegrationService;
 import com.youblog.blog.services.BlogPostsIntegration;
 import com.youblog.blog.services.PostIntegrationService;
 import com.youblog.blog.services.BlogPostsIntegration.MessageSources;

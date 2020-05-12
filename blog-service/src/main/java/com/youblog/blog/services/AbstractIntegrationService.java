@@ -1,4 +1,4 @@
-package com.youblog.blog.services.map;
+package com.youblog.blog.services;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.youblog.blog.services.IntegrationService;
 import com.youblog.util.exceptions.InvalidInputException;
 import com.youblog.util.exceptions.NotFoundException;
 import com.youblog.util.http.HttpErrorInfo;

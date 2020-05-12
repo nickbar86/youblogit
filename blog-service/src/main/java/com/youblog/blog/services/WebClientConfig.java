@@ -1,4 +1,4 @@
-package com.youblog.blog.services.map;
+package com.youblog.blog.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
