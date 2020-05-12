@@ -31,7 +31,6 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.youblog.blog.api.IBlog;
 import com.youblog.blog.services.BlogPostsIntegration;
 import com.youblog.blog.services.dto.BlogUserDTO;
 import com.youblog.blog.services.dto.BlogUserDetails;
@@ -51,10 +50,11 @@ import com.youblog.util.http.ServiceUtil;
 import io.github.resilience4j.reactor.retry.RetryExceptionWrapper;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
+//"To be Removed after unit testing"
 @RestController
-public class BlogController implements IBlog {
-
+@Deprecated
+public class BlogController {
+/*
 	private static final String NO_USER_ID = "No User Id";
 
 	private static final Logger LOG = LoggerFactory.getLogger(BlogController.class);
@@ -398,5 +398,5 @@ public class BlogController implements IBlog {
 				.onErrorMap(RetryExceptionWrapper.class, RetryExceptionWrapper::getCause)
 				.onErrorReturn(CircuitBreakerOpenException.class, getUserFallbackValue());
 
-	}
+	}*/
 }

@@ -9,7 +9,7 @@ const url = "blog-post";
 
 export function getAllPosts(userPosts, page, size, sort) {
   const requestUrl = `${url}${
-    sort ? `?userPosts=${userPosts}&page=${page}&size=${size}&sort=${sort}` : ""
+    sort ? `/posts?userPosts=${userPosts}&page=${page}&size=${size}&sort=${sort}` : ""
   }`;
   return commonApiGetObject(`${requestUrl}`, actions.FETCH_POSTS, true);
 }
