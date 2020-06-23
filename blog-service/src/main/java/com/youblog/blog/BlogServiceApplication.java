@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan("com.youblog.blog, com.youblog.util, com.youblog.blog")
+@ComponentScan("com.youblog.blog, com.youblog.util")
 public class BlogServiceApplication {
 
 	@Bean

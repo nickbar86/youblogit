@@ -31,7 +31,7 @@ public class GlobalControllerExceptionHandler {
 		return createHttpErrorInfo(HttpStatus.UNPROCESSABLE_ENTITY, request, ex);
 	}
 	
-	@ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(InternalApplicationException.class)
 	public @ResponseBody HttpErrorInfo handleInternalApplicationException(ServerHttpRequest request, Exception ex) {
 		return createHttpErrorInfo(HttpStatus.INTERNAL_SERVER_ERROR, request, ex);
